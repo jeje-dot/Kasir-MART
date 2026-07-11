@@ -417,7 +417,8 @@
                         <button onclick="tambahKaryawan()" style="background:var(--success); color:white; width:200px; flex-grow: 1;">+ Daftarkan Staf</button>
                     </div>
                     <div class="table-responsive">
-                        <table id="worker-table" style="margin-top:0;"><thead><tr><th>Nama Karyawan</th><th>Role Akses</th><th>Status</th><th>Aksi Hapus</th></tr></thead><tbody></tbody></table>
+                        <table id="worker-table" style="margin-top:0;"><thead><tr><th>Nama Karyawan</th><th>Role Akses</th><th>Status</th><th>Aksi Hapus</th></tr></thead><tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -631,11 +632,15 @@
             renderKeranjang();
         }
 
+        // OPTIMASI: renderKeranjang menggunakan variabel penampung string untuk mencegah DOM Thrashing
         function renderKeranjang() {
-            let tbody = document.querySelector('#cart-table tbody'); tbody.innerHTML = ''; let subtotalAll = 0;
+            let tbody = document.querySelector('#cart-table tbody'); 
+            let htmlTemp = ''; 
+            let subtotalAll = 0;
+            
             keranjang.forEach(item => {
                 let subtotal = item.harga * item.qty; subtotalAll += subtotal;
-                tbody.innerHTML += `<tr>
+                htmlTemp += `<tr>
                     <td><b style="font-size:14px">${item.nama}</b><br><small style="color:#7f8c8d">SKU: ${item.id}</small></td>
                     <td>Rp ${item.harga.toLocaleString('id-ID')}</td>
                     <td><div class="qty-control"><button class="btn-qty" onclick="ubahQty('${item.id}', -1)">-</button><span style="font-weight:bold; width:20px; text-align:center;">${item.qty}</span><button class="btn-qty" onclick="ubahQty('${item.id}', 1)">+</button></div></td>
@@ -643,6 +648,9 @@
                     <td><button onclick="ubahQty('${item.id}', -${item.qty})" style="background:var(--danger); border:none; color:white; border-radius:6px; padding:6px 10px; cursor:pointer;">X</button></td>
                 </tr>`;
             });
+            
+            tbody.innerHTML = htmlTemp;
+            
             let diskon = Math.max(0, parseInt(document.getElementById('input-diskon').value) || 0);
             finalTransaksiTotal = Math.max(0, subtotalAll - diskon);
             document.getElementById('grand-total').innerText = finalTransaksiTotal.toLocaleString('id-ID');
@@ -650,7 +658,6 @@
 
         function setBayarPas() { document.getElementById('input-bayar').value = finalTransaksiTotal; }
         
-        // PEMBARUAN: Tombol uang bayar sekarang bersiat AKUMULASI (menjumlah)
         function setBayar(nominal) { 
             let inputBayar = document.getElementById('input-bayar');
             let currentVal = parseInt(inputBayar.value) || 0;
@@ -664,14 +671,20 @@
             kategoris.forEach(k => { container.innerHTML += `<div class="cat-chip" id="chip-${k}" onclick="filterProdukKasir('${k}')">${k}</div>`; });
         }
 
+        // OPTIMASI: Mencegah DOM Thrashing saat meload banyak gambar produk di kasir
         function filterProdukKasir(kat) {
             document.querySelectorAll('.cat-chip').forEach(el => el.classList.remove('active'));
             document.getElementById('chip-' + kat).classList.add('active');
-            let grid = document.getElementById('quick-product-grid'); grid.innerHTML = '';
+            let grid = document.getElementById('quick-product-grid'); 
+            
             let filtered = (kat === 'Semua') ? produkList : produkList.filter(p => p.kategori === kat);
+            let htmlTemp = '';
+            
             filtered.forEach(p => {
-                grid.innerHTML += `<div class="product-card" onclick="tambahKeKeranjang('${p.id}')"><div style="font-size:13px; font-weight:700; color:var(--dark); overflow:hidden;">${p.nama}</div><div style="font-size:14px; color:var(--success); font-weight:bold; margin-top:8px;">Rp ${p.harga.toLocaleString('id-ID')}</div><div style="font-size:11px; color:#94a3b8; margin-top:5px; background:var(--light); padding:2px; border-radius:4px;">Stok: ${p.stok}</div></div>`;
+                htmlTemp += `<div class="product-card" onclick="tambahKeKeranjang('${p.id}')"><div style="font-size:13px; font-weight:700; color:var(--dark); overflow:hidden;">${p.nama}</div><div style="font-size:14px; color:var(--success); font-weight:bold; margin-top:8px;">Rp ${p.harga.toLocaleString('id-ID')}</div><div style="font-size:11px; color:#94a3b8; margin-top:5px; background:var(--light); padding:2px; border-radius:4px;">Stok: ${p.stok}</div></div>`;
             });
+            
+            grid.innerHTML = htmlTemp;
         }
 
         function tahanTransaksi() {
@@ -698,11 +711,11 @@
             if(keranjang.length > 0) { alert("Peringatan: Keranjang saat ini belum kosong. Selesaikan atau tahan pesanan saat ini terlebih dahulu."); return; }
             
             let container = document.getElementById('hold-items-container');
-            container.innerHTML = '';
+            let htmlTemp = '';
             
             transaksiDitahan.forEach((trx, index) => {
                 let totalItems = trx.keranjang.reduce((sum, item) => sum + item.qty, 0);
-                container.innerHTML += `
+                htmlTemp += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: var(--light);">
                         <div>
                             <b style="font-size: 16px; color: var(--primary);">${trx.namaPenahan}</b><br>
@@ -712,6 +725,8 @@
                     </div>
                 `;
             });
+            
+            container.innerHTML = htmlTemp;
             document.getElementById('modal-hold-list').style.display = 'flex';
         }
 
@@ -747,7 +762,6 @@
             let subtotalAwal = finalTransaksiTotal + diskon;
             let kembalian = Math.max(0, bayar - finalTransaksiTotal);
 
-            // Simpan detail objek keranjang mentah agar bisa di render ulang di Laporan Cetak
             let dataTransaksi = { 
                 idNota: notaID, 
                 waktu: waktuSkrg, 
@@ -757,7 +771,7 @@
                 tunaiBayar: bayar, 
                 kembalian: kembalian, 
                 itemsTerbeli: keranjang.map(i => `${i.nama} (x${i.qty})`),
-                detailKeranjang: [...keranjang] // Copy isi keranjang
+                detailKeranjang: [...keranjang] 
             };
             riwayatPenjualan.unshift(dataTransaksi); localStorage.setItem('riwayat_jual', JSON.stringify(riwayatPenjualan));
 
@@ -783,13 +797,16 @@
             } catch (err) { console.log(err); alert("Batal menyambungkan printer."); }
         }
 
+        // OPTIMASI & PERBAIKAN PRINTER: Mengatur memori antrean pengiriman Bluetooth dengan ukuran chunk 100 byte dan jeda 50ms agar struk tidak terpotong
         async function cetakBluetoothRaw(text) {
             if(!btCharacteristic) return false;
             try {
                 let encoder = new TextEncoder();
                 let printData = encoder.encode('\x1B\x40' + text + '\n\n\n'); 
-                for(let i = 0; i < printData.length; i += 512) {
-                    await btCharacteristic.writeValue(printData.slice(i, i + 512));
+                
+                for(let i = 0; i < printData.length; i += 100) {
+                    await btCharacteristic.writeValue(printData.slice(i, i + 100));
+                    await new Promise(resolve => setTimeout(resolve, 50)); 
                 }
                 return true;
             } catch(e) { console.error("Error Cetak BT:", e); return false; }
@@ -798,7 +815,6 @@
         async function lakukanCetakStruk(notaID, waktuSkrg, subtotalAwal, diskon, bayar, kembalian) {
             let printArea = document.getElementById('receipt-print-area');
             
-            // PEMBARUAN: Menggunakan standar tabel HTML Kiosk Printing agar anti-gagal
             let htmlItemsRows = ''; 
             let textBT = `${shopConfig.namaStruk}\n${shopConfig.alamat}\nTelp: ${shopConfig.telp}\n--------------------------------\nNota : ${notaID}\nKasir: ${userAktif.nama}\nWaktu: ${waktuSkrg}\n--------------------------------\n`;
             
@@ -857,7 +873,6 @@
             }
         }
         
-        // PEMBARUAN: Cetak Laporan Detail Beserta Filter Transaksinya
         async function cetakLaporanOmset() {
             let printArea = document.getElementById('receipt-print-area');
             let tot = document.getElementById('total-omset-display').innerText;
@@ -868,11 +883,8 @@
 
             riwayatPenjualan.forEach(trx => {
                 if(trx.kasir.toLowerCase().includes(filter) || trx.idNota.toLowerCase().includes(filter) || trx.waktu.toLowerCase().includes(filter)) {
-                    
-                    // Bangun text untuk thermal bluetooth
                     textBT += `Nota: ${trx.idNota}\n[${trx.waktu}]\nKasir: ${trx.kasir}\nItem: ${trx.itemsTerbeli.join(', ')}\nTotal: Rp ${trx.totalBelanja}\n\n`;
 
-                    // Bangun HTML untuk cetak Kiosk
                     rekapItemsHTML += `
                         <div style="margin-bottom:8px; border-bottom: 1px dashed #ccc; padding-bottom:5px;">
                             <div style="font-weight:bold;">Nota: ${trx.idNota}</div>
@@ -973,7 +985,16 @@
         }
 
         // --- 9. FUNGSI STANDAR LAINNYA ---
-        function renderStok() { let tbody = document.querySelector('#stock-table tbody'); tbody.innerHTML = ''; produkList.forEach(p => { tbody.innerHTML += `<tr><td><b style="color:var(--primary)">${p.id}</b></td><td>${p.nama}</td><td><span class="badge badge-super">${p.kategori}</span></td><td>Rp ${p.harga.toLocaleString('id-ID')}</td><td><span style="font-weight:bold; color:${p.stok <= 5 ? 'var(--danger)':'var(--success)'}">${p.stok}</span></td><td><button onclick="hapusBarang('${p.id}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button></td></tr>`; }); }
+        
+        // OPTIMASI: renderStok menggunakan String Buffer untuk menangani ratusan barang tanpa Lag
+        function renderStok() { 
+            let tbody = document.querySelector('#stock-table tbody'); 
+            let htmlTemp = '';
+            produkList.forEach(p => { 
+                htmlTemp += `<tr><td><b style="color:var(--primary)">${p.id}</b></td><td>${p.nama}</td><td><span class="badge badge-super">${p.kategori}</span></td><td>Rp ${p.harga.toLocaleString('id-ID')}</td><td><span style="font-weight:bold; color:${p.stok <= 5 ? 'var(--danger)':'var(--success)'}">${p.stok}</span></td><td><button onclick="hapusBarang('${p.id}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button></td></tr>`; 
+            }); 
+            tbody.innerHTML = htmlTemp;
+        }
         
         function tambahBarang() { 
             let id = document.getElementById('new-barcode').value.trim(); 
@@ -995,10 +1016,14 @@
         
         function hapusBarang(id) { if(confirm("Hapus produk permanen?")) { produkList = produkList.filter(p => p.id !== id); localStorage.setItem('produk', JSON.stringify(produkList)); refreshSemuaData(); } }
         
+        // OPTIMASI: renderOpname
         function renderOpname() { 
             let tbody = document.querySelector('#opname-table tbody'); 
-            tbody.innerHTML = ''; 
-            produkList.forEach((p, idx) => { tbody.innerHTML += `<tr><td>${p.id}</td><td><b>${p.nama}</b></td><td>${p.stok}</td><td><input type="number" min="0" id="f-${idx}" value="${p.stok}" style="width:100px; padding:8px; margin:0;"></td><td><button onclick="sesuaikanStok(${idx})" style="background:var(--accent); color:white;">Sesuaikan</button></td></tr>`; }); 
+            let htmlTemp = '';
+            produkList.forEach((p, idx) => { 
+                htmlTemp += `<tr><td>${p.id}</td><td><b>${p.nama}</b></td><td>${p.stok}</td><td><input type="number" min="0" id="f-${idx}" value="${p.stok}" style="width:100px; padding:8px; margin:0;"></td><td><button onclick="sesuaikanStok(${idx})" style="background:var(--accent); color:white;">Sesuaikan</button></td></tr>`; 
+            }); 
+            tbody.innerHTML = htmlTemp;
         }
         
         function sesuaikanStok(idx) { 
@@ -1009,28 +1034,49 @@
             alert("Stok Real disesuaikan!"); 
         }
         
-        // PEMBARUAN: Penambahan Filter Tanggal pada Laporan Omset
+        // OPTIMASI: renderLaporanPenjualan
         function renderLaporanPenjualan() { 
             let tbody = document.querySelector('#sales-history-table tbody'); 
-            tbody.innerHTML = ''; 
+            let htmlTemp = '';
             let tot = 0; 
             let f = document.getElementById('filter-sales').value.toLowerCase(); 
+            
             riwayatPenjualan.forEach(trx => { 
                 if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) { 
                     tot += trx.totalBelanja;
-                    tbody.innerHTML += `<tr><td><b>${trx.idNota}</b><br><small style="color:var(--secondary);">${trx.waktu}</small></td><td><span class="badge badge-staff">${trx.kasir}</span></td><td><div style="font-size:12px; color:var(--secondary); max-width:250px;">${trx.itemsTerbeli.join(', ')}</div></td><td><b style="color:var(--primary); font-size:15px;">Rp ${trx.totalBelanja.toLocaleString('id-ID')}</b></td><td><small style="color:var(--success); font-weight:bold;">Tunai: ${trx.tunaiBayar}</small><br><small style="color:var(--warning); font-weight:bold;">Kembali: ${trx.kembalian}</small></td></tr>`; 
+                    htmlTemp += `<tr><td><b>${trx.idNota}</b><br><small style="color:var(--secondary);">${trx.waktu}</small></td><td><span class="badge badge-staff">${trx.kasir}</span></td><td><div style="font-size:12px; color:var(--secondary); max-width:250px;">${trx.itemsTerbeli.join(', ')}</div></td><td><b style="color:var(--primary); font-size:15px;">Rp ${trx.totalBelanja.toLocaleString('id-ID')}</b></td><td><small style="color:var(--success); font-weight:bold;">Tunai: ${trx.tunaiBayar}</small><br><small style="color:var(--warning); font-weight:bold;">Kembali: ${trx.kembalian}</small></td></tr>`; 
                 } 
             }); 
+            
+            tbody.innerHTML = htmlTemp;
             document.getElementById('total-omset-display').innerText = tot.toLocaleString('id-ID'); 
         }
         
         function hapusSemuaRiwayat() { if(confirm("Hapus semua omset secara permanen?")) { riwayatPenjualan = []; localStorage.setItem('riwayat_jual', JSON.stringify([])); refreshSemuaData(); } }
         
-        function renderAnggota() { let tbody = document.querySelector('#anggota-table tbody'); tbody.innerHTML = ''; anggotaList.forEach(a => { tbody.innerHTML += `<tr><td><b>${a.nis}</b></td><td>${a.nama}</td><td><span class="badge badge-staff">${a.kelas}</span></td><td><button onclick="hapusAnggota('${a.nis}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button></td></tr>`; }); }
+        // OPTIMASI: renderAnggota
+        function renderAnggota() { 
+            let tbody = document.querySelector('#anggota-table tbody'); 
+            let htmlTemp = '';
+            anggotaList.forEach(a => { 
+                htmlTemp += `<tr><td><b>${a.nis}</b></td><td>${a.nama}</td><td><span class="badge badge-staff">${a.kelas}</span></td><td><button onclick="hapusAnggota('${a.nis}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button></td></tr>`; 
+            }); 
+            tbody.innerHTML = htmlTemp;
+        }
+        
         function tambahAnggota() { let nis = document.getElementById('a-nis').value.trim(); let nama = document.getElementById('a-nama').value.trim(); let kelas = document.getElementById('a-kelas').value.trim(); if(nis && nama) { if(anggotaList.find(x => x.nis === nis)) { alert("NIS terdaftar!"); return; } anggotaList.push({nis, nama, kelas: kelas || "-"}); localStorage.setItem('anggota', JSON.stringify(anggotaList)); document.getElementById('a-nis').value=''; document.getElementById('a-nama').value=''; document.getElementById('a-kelas').value=''; renderAnggota(); } }
         function hapusAnggota(nis) { if(confirm("Hapus pelanggan ini?")) { anggotaList = anggotaList.filter(a => a.nis !== nis); localStorage.setItem('anggota', JSON.stringify(anggotaList)); renderAnggota(); } }
         
-        function renderKaryawan() { let tbody = document.querySelector('#worker-table tbody'); tbody.innerHTML = ''; karyawanList.forEach(k => { tbody.innerHTML += `<tr><td><b>${k.nama}</b></td><td><span class="badge ${k.role==='Owner'?'badge-owner':'badge-staff'}">${k.role}</span></td><td><span style="color:var(--success); font-weight:bold;">Aktif</span></td><td>${k.role!=='Owner' ? `<button onclick="hapusKaryawan('${k.pinHash}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button>` : '-'}</td></tr>`; }); }
+        // OPTIMASI: renderKaryawan
+        function renderKaryawan() { 
+            let tbody = document.querySelector('#worker-table tbody'); 
+            let htmlTemp = '';
+            karyawanList.forEach(k => { 
+                htmlTemp += `<tr><td><b>${k.nama}</b></td><td><span class="badge ${k.role==='Owner'?'badge-owner':'badge-staff'}">${k.role}</span></td><td><span style="color:var(--success); font-weight:bold;">Aktif</span></td><td>${k.role!=='Owner' ? `<button onclick="hapusKaryawan('${k.pinHash}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button>` : '-'}</td></tr>`; 
+            }); 
+            tbody.innerHTML = htmlTemp;
+        }
+        
         function tambahKaryawan() { let n = document.getElementById('k-nama').value.trim(); let p = document.getElementById('k-pin').value.trim(); if(n&&p){ karyawanList.push({nama:n, pinHash:hashPIN(p), role:"Staff"}); localStorage.setItem('karyawan', JSON.stringify(karyawanList)); document.getElementById('k-nama').value=''; document.getElementById('k-pin').value=''; refreshSemuaData(); } }
         function hapusKaryawan(hash) { if(confirm("Cabut akses staf ini?")){ karyawanList=karyawanList.filter(k=>k.pinHash!==hash); localStorage.setItem('karyawan',JSON.stringify(karyawanList)); refreshSemuaData(); } }
         
