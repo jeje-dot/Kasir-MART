@@ -9,12 +9,12 @@
         :root {
             --primary: #0f172a; 
             --secondary: #64748b; 
-            --success: #10b981; /* Green */
-            --danger: #ef4444; /* Red */
-            --warning: #f59e0b; /* Orange */
+            --success: #10b981; 
+            --danger: #ef4444; 
+            --warning: #f59e0b; 
             --light: #f8fafc; 
             --dark: #020617;
-            --accent: #2563eb; /* Blue */
+            --accent: #2563eb; 
             --border: #e2e8f0;
             --sidebar-bg: #0f172a;
         }
@@ -24,7 +24,7 @@
         #app-layout { display: flex; min-height: 100vh; }
         
         /* Sidebar Mirip Gambar */
-        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: 0.3s; z-index: 100; position: fixed; height: 100vh; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: transform 0.3s ease; z-index: 100; position: fixed; height: 100vh; transform: translateX(0); }
         .sidebar-brand { padding: 25px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-brand .icon-logo { color: #f59e0b; font-size: 26px; }
         .sidebar-menu { list-style: none; padding: 15px 10px; margin: 0; flex: 1; overflow-y: auto; }
@@ -40,8 +40,10 @@
         .logout-btn:hover { background: rgba(239, 68, 68, 0.2); color: var(--danger); border-color: rgba(239, 68, 68, 0.4); }
 
         /* Area Konten Utama */
-        .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; transition: margin-left 0.3s ease; }
         .topbar { background: white; padding: 18px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 90; }
+        .topbar-left { display: flex; align-items: center; gap: 15px; }
+        .btn-toggle-sidebar { background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--primary); padding: 0; display: flex; align-items: center; justify-content: center; }
         .topbar h2 { margin: 0; font-size: 22px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
         .topbar-right { display: flex; align-items: center; gap: 20px; }
         .date-display { display: flex; align-items: center; gap: 8px; color: var(--secondary); font-weight: 500; font-size: 14px; border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; background: var(--light); }
@@ -53,7 +55,8 @@
         
         /* Dashboard Cards Sesuai Gambar */
         .dash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .dash-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 18px; }
+        .dash-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 18px; cursor: pointer; transition: 0.2s; }
+        .dash-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .dash-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; }
         .dash-info h4 { margin: 0 0 6px 0; color: var(--secondary); font-size: 14px; font-weight: 600; }
         .dash-info h2 { margin: 0; color: var(--primary); font-size: 24px; }
@@ -98,6 +101,9 @@
         
         .btn-pay-method { background: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; flex: 1; font-size: 13px; font-weight: 600; color: var(--secondary); display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-pay-method.active { background: var(--accent); color: white; border-color: var(--accent); }
+        
+        .btn-cash { background: white; border: 1px solid var(--border); padding: 8px; border-radius: 6px; font-weight: 700; color: var(--accent); transition: 0.2s; font-size: 13px; }
+        .btn-cash:hover { background: var(--light); border-color: var(--accent); }
 
         .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .badge-owner { background: #fef3c7; color: #d97706; }
@@ -121,16 +127,13 @@
         .sa-tab-content { display: none; animation: fadeIn 0.3s ease; }
         .sa-tab-content.active { display: block; }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .pos-layout { flex-direction: column; }
-            .pos-cart { width: 100%; min-width: auto; position: static; }
-        }
+        /* Responsive Sidebar */
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .main-wrapper { margin-left: 0; }
             .content-container { padding: 15px; }
-            /* Tambahkan hamburger menu logik jika diperlukan nanti */
+            .pos-layout { flex-direction: column; }
+            .pos-cart { width: 100%; min-width: auto; position: static; }
         }
 
         /* Print Area */
@@ -193,7 +196,7 @@
 
     <!-- Layout Utama Aplikasi -->
     <div id="app-layout">
-        <aside class="sidebar">
+        <aside class="sidebar" id="main-sidebar">
             <div class="sidebar-brand" onclick="triggerSuperAdmin()" style="cursor:pointer;" title="Ketuk 3x untuk Akses Super Admin">
                 <span class="icon-logo">🛒</span> <span id="app-title">MINIMART</span>
             </div>
@@ -203,8 +206,8 @@
                 <li id="menu-stock" class="id-owner-only" onclick="showSection('stock', 'Produk & Kelola Stok')">📦 Produk</li>
                 <li id="menu-opname" onclick="showSection('opname', 'Sistem Stock Opname')">📋 Stock Opname</li>
                 <li id="menu-anggota" class="id-owner-only" onclick="showSection('anggota', 'Data Pelanggan')">👥 Pelanggan</li>
-                <li id="menu-sales" class="id-owner-only" onclick="showSection('sales', 'Laporan Omset')">📈 Laporan Penjualan</li>
-                <li id="menu-printer-setup" class="id-owner-only" onclick="showSection('printer-setup', 'Koneksi Printer')">🖨️ Printer Kasir</li>
+                <li id="menu-sales" onclick="showSection('sales', 'Laporan Omset')">📈 Laporan Penjualan</li>
+                <li id="menu-printer-setup" onclick="showSection('printer-setup', 'Koneksi Printer')">🖨️ Printer Kasir</li>
                 <li id="menu-super-admin" onclick="triggerSuperAdmin()" style="display:none;">⚙️ Pengaturan</li>
             </ul>
             <div class="sidebar-footer">
@@ -216,9 +219,12 @@
             </div>
         </aside>
 
-        <main class="main-wrapper">
+        <main class="main-wrapper" id="main-content-wrapper">
             <header class="topbar">
-                <h2 id="header-menu-title">Dashboard</h2>
+                <div class="topbar-left">
+                    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">☰</button>
+                    <h2 id="header-menu-title">Dashboard</h2>
+                </div>
                 <div class="topbar-right">
                     <div class="date-display">📅 <span id="header-date-text"></span></div>
                     <button class="btn-refresh" onclick="refreshSemuaData()">🔄 Refresh</button>
@@ -229,19 +235,19 @@
                 <!-- DASHBOARD VIEW -->
                 <div id="dashboard" class="section">
                     <div class="dash-cards">
-                        <div class="dash-card">
+                        <div class="dash-card" onclick="showSection('sales', 'Laporan Omset')">
                             <div class="dash-icon" style="background: var(--accent);"><span style="font-size:28px;">🛍️</span></div>
                             <div class="dash-info"><h4>Penjualan Hari Ini</h4><h2 id="dash-omset">Rp 0</h2></div>
                         </div>
-                        <div class="dash-card">
+                        <div class="dash-card" onclick="showSection('sales', 'Laporan Omset')">
                             <div class="dash-icon" style="background: var(--success);"><span style="font-size:28px;">📄</span></div>
                             <div class="dash-info"><h4>Total Transaksi</h4><h2 id="dash-trx">0</h2></div>
                         </div>
-                        <div class="dash-card">
+                        <div class="dash-card" onclick="showSection('sales', 'Laporan Omset')">
                             <div class="dash-icon" style="background: var(--warning);"><span style="font-size:28px;">🏷️</span></div>
                             <div class="dash-info"><h4>Total Diskon Diberikan</h4><h2 id="dash-laba">Rp 0</h2></div>
                         </div>
-                        <div class="dash-card" style="cursor:pointer;" onclick="showSection('stock', 'Produk & Kelola Stok')">
+                        <div class="dash-card" onclick="bukaStokMenipis()">
                             <div class="dash-icon" style="background: var(--danger);"><span style="font-size:28px;">⚠️</span></div>
                             <div class="dash-info"><h4>Stok Menipis (≤ 5)</h4><h2 id="dash-stok">0</h2></div>
                         </div>
@@ -253,7 +259,7 @@
                         <div style="display:flex; gap:15px; flex-wrap:wrap;">
                             <button onclick="showSection('pos', 'Kasir / POS')" style="background:var(--accent); color:white; font-size:15px;"><span style="font-size:18px; margin-right:6px;">🛒</span> Buka Mesin Kasir</button>
                             <button class="id-owner-only" onclick="showSection('stock', 'Produk & Kelola Stok')" style="background:white; border:1px solid var(--border); color:var(--primary); font-size:15px;"><span style="font-size:18px; margin-right:6px;">📦</span> Tambah Barang</button>
-                            <button class="id-owner-only" onclick="showSection('sales', 'Laporan Omset')" style="background:white; border:1px solid var(--border); color:var(--primary); font-size:15px;"><span style="font-size:18px; margin-right:6px;">📈</span> Cek Laporan</button>
+                            <button onclick="showSection('sales', 'Laporan Omset')" style="background:white; border:1px solid var(--border); color:var(--primary); font-size:15px;"><span style="font-size:18px; margin-right:6px;">📈</span> Cek Laporan</button>
                         </div>
                     </div>
                 </div>
@@ -283,7 +289,7 @@
                                 <button onclick="kosongkanKeranjang()" style="color:var(--danger); background:none; border:none; font-weight:600; font-size:13px; padding:0;"><span style="font-size:14px;">🗑️</span> Hapus Semua</button>
                             </div>
                             
-                            <div style="max-height: 280px; overflow-y:auto; border:1px solid var(--border); border-radius:10px; padding:10px; background:var(--light); min-height: 150px; margin-bottom:15px;">
+                            <div style="max-height: 250px; overflow-y:auto; border:1px solid var(--border); border-radius:10px; padding:10px; background:var(--light); min-height: 120px; margin-bottom:15px;">
                                 <table class="cart-table" id="cart-table">
                                     <tbody id="cart-body"></tbody>
                                 </table>
@@ -300,18 +306,20 @@
                                     <span id="grand-total" style="font-size:32px; font-weight:800; color:var(--accent); letter-spacing:-1px;">Rp 0</span>
                                 </div>
 
-                                <div style="margin-bottom:15px;">
-                                    <span style="font-size:12px; color:var(--secondary); font-weight:600; display:block; margin-bottom:8px;">Metode Pembayaran</span>
-                                    <div style="display:flex; gap:8px;">
-                                        <div class="btn-pay-method active">💵 Tunai</div>
-                                        <div class="btn-pay-method">💳 Kartu</div>
-                                        <div class="btn-pay-method">📱 QRIS</div>
+                                <div style="margin-bottom:12px;">
+                                    <span style="font-size:12px; color:var(--secondary); font-weight:600; display:block; margin-bottom:8px;">Pecahan Cepat Uang Tunai</span>
+                                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
+                                        <button onclick="setBayar(10000)" class="btn-cash">10K</button>
+                                        <button onclick="setBayar(20000)" class="btn-cash">20K</button>
+                                        <button onclick="setBayar(50000)" class="btn-cash">50K</button>
+                                        <button onclick="setBayar(100000)" class="btn-cash">100K</button>
                                     </div>
                                 </div>
 
                                 <div style="margin-bottom:15px; display:flex; gap:8px;">
-                                    <input type="number" id="input-bayar" min="0" placeholder="Nominal Uang Diterima..." style="flex:1; margin:0; font-size:16px; font-weight:bold; border-color:var(--accent);" onkeypress="if(event.key==='Enter') prosesPembayaran()">
-                                    <button onclick="setBayarPas()" style="background:var(--light); border:1px solid var(--border); color:var(--primary); white-space:nowrap; padding:0 15px;">Uang Pas</button>
+                                    <input type="number" id="input-bayar" min="0" placeholder="Manual..." style="flex:1; margin:0; font-size:16px; font-weight:bold; border-color:var(--accent);" onkeypress="if(event.key==='Enter') prosesPembayaran()">
+                                    <button onclick="setBayarPas()" style="background:var(--warning); color:white; border:none; white-space:nowrap; padding:0 15px;">Uang Pas</button>
+                                    <button onclick="document.getElementById('input-bayar').value=''" style="background:var(--danger); color:white; border:none; padding:0 12px;">C</button>
                                 </div>
 
                                 <div style="display:flex; gap:10px;">
@@ -332,6 +340,14 @@
                             <button onclick="importBarangExcel()" style="background: var(--accent); color:white;">📥 Import Excel</button>
                             <button onclick="exportBarangExcel()" style="background: #27ae60; color:white;">📤 Export Excel</button>
                         </div>
+                    </div>
+
+                    <!-- Banner Peringatan Filter Stok -->
+                    <div id="filter-stok-banner" style="display:none; background: #fef2f2; border: 1px solid #fecaca; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px; color: var(--danger); font-weight: 600;">
+                            <span style="font-size: 20px;">⚠️</span> Anda sedang melihat daftar barang dengan stok menipis (≤ 5).
+                        </div>
+                        <button onclick="resetFilterStok()" style="background: var(--danger); color: white; padding: 8px 16px; border-radius: 6px;">Tampilkan Semua Stok</button>
                     </div>
                     
                     <div style="background: white; padding: 25px; border-radius: 16px; margin-bottom: 25px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; align-items: end;">
@@ -362,7 +378,7 @@
                     </div>
                     <div style="background:white; padding:15px; border-radius:12px; display:flex; flex-wrap: wrap; gap:15px; margin-bottom: 20px; border: 1px solid var(--border);">
                         <input type="text" id="filter-sales" placeholder="🔍 Cari ID Nota, Kasir, atau Tanggal..." oninput="renderLaporanPenjualan()" style="margin:0; flex:1; min-width: 300px;">
-                        <button onclick="hapusSemuaRiwayat()" style="background:white; border:1px solid var(--danger); color:var(--danger);">Reset Semua Riwayat</button>
+                        <button class="id-owner-only" onclick="hapusSemuaRiwayat()" style="background:white; border:1px solid var(--danger); color:var(--danger);">Reset Semua Riwayat</button>
                     </div>
                     <div class="table-responsive">
                         <table id="sales-history-table"><thead><tr><th>Nota & Waktu</th><th>Kasir</th><th>Detail Pesanan</th><th>Total Belanja</th><th>Pembayaran</th><th>Aksi</th></tr></thead><tbody></tbody></table>
@@ -395,7 +411,7 @@
                         <div style="background:white; padding:30px; border-radius:16px; border:1px solid var(--border); text-align:center;">
                             <div style="font-size: 48px; margin-bottom: 15px;">📶</div>
                             <h3 style="margin: 0 0 10px 0;">Bluetooth Kasir (Nirkabel)</h3>
-                            <p style="font-size: 14px; color: var(--secondary);">Web Bluetooth API. Struk akan otomatis tercetak tanpa dialog (Khusus PC/Android Browser tertentu).</p>
+                            <p style="font-size: 14px; color: var(--secondary);">Sistem kami akan mencoba menyambung otomatis dengan printer yang telah diizinkan. Jika gagal, hubungkan manual di bawah.</p>
                             <div style="margin: 20px 0; padding: 15px; background: var(--light); border-radius: 12px; border: 1px dashed var(--border);">
                                 <span id="printer-status" style="font-weight:bold; color:var(--danger); font-size:15px;">❌ Belum Tersambung</span>
                             </div>
@@ -476,10 +492,7 @@
     <script>
         // --- FITUR 3: ANTI-REFRESH CERDAS ---
         window.addEventListener('beforeunload', function (e) {
-            if (userAktif) { // Jika sedang login, cegah refresh agar sesi tidak hilang mendadak
-                e.preventDefault();
-                e.returnValue = 'Data sesi Anda akan hilang jika halaman dimuat ulang. Tetap tinggalkan halaman?';
-            }
+            if (userAktif) { e.preventDefault(); e.returnValue = 'Data sesi Anda akan hilang jika halaman dimuat ulang. Tetap tinggalkan halaman?'; }
         });
 
         const _SECRET_SALT = "POS_SECURE_";
@@ -503,6 +516,31 @@
         
         let keranjang = []; let userAktif = null; let isLocked = false; let salahLogCount = 0; let secretClicks = 0; let finalTransaksiTotal = 0;
         let btDevice = null; let btCharacteristic = null;
+        let isFilterMenipis = false; // Flag untuk filter stok
+
+        // --- FITUR 1: FUNGSI BUKA TUTUP SIDEBAR ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('main-sidebar');
+            const main = document.getElementById('main-content-wrapper');
+            
+            // Logika untuk layar lebar (PC/Laptop)
+            if (window.innerWidth > 768) {
+                if (sidebar.style.transform === 'translateX(-100%)') {
+                    sidebar.style.transform = 'translateX(0)';
+                    main.style.marginLeft = '260px';
+                } else {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    main.style.marginLeft = '0';
+                }
+            } else {
+                // Logika untuk HP
+                if (sidebar.style.transform === 'translateX(0px)') {
+                    sidebar.style.transform = 'translateX(-100%)';
+                } else {
+                    sidebar.style.transform = 'translateX(0px)';
+                }
+            }
+        }
 
         function initBranding() {
             document.getElementById('login-brand').innerText = shopConfig.namaApp;
@@ -512,7 +550,7 @@
         }
         initBranding();
 
-        function checkLogin() {
+        async function checkLogin() {
             if (isLocked) return;
             let pinInput = document.getElementById('input-pin').value.trim();
             let inputHash = hashPIN(pinInput);
@@ -522,16 +560,43 @@
                 salahLogCount = 0; userAktif = user;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-layout').style.display = 'flex';
-                
                 document.getElementById('active-user-name').innerText = user.nama;
                 
                 document.querySelectorAll('.id-owner-only').forEach(e => { e.style.display = (user.role === 'Staff') ? 'none' : 'flex'; });
                 
                 showSection('dashboard', 'Dashboard');
                 updateHoldCountUI();
+                
+                // Coba sambungkan printer otomatis
+                await autoConnectPrinter();
             } else { 
                 salahLogCount++; document.getElementById('input-pin').value = '';
                 if (salahLogCount >= 3) triggerLockout(); else alert(`PIN Salah!`);
+            }
+        }
+
+        // --- FITUR 5: AUTO CONNECT PRINTER SETELAH LOGIN ---
+        async function autoConnectPrinter() {
+            if (navigator.bluetooth && navigator.bluetooth.getDevices) {
+                try {
+                    const devices = await navigator.bluetooth.getDevices();
+                    if (devices.length > 0) {
+                        for (const device of devices) {
+                            try {
+                                const server = await device.gatt.connect();
+                                const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+                                btCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
+                                btDevice = device;
+                                let statusEl = document.getElementById('printer-status');
+                                if(statusEl) statusEl.innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung Otomatis: ${device.name}</span>`;
+                                console.log("Berhasil terhubung otomatis ke Printer: " + device.name);
+                                break; 
+                            } catch (e) {
+                                console.log("Gagal menyambung otomatis ke perangkat: " + device.name);
+                            }
+                        }
+                    }
+                } catch(err) { console.log("Error mengambil data getDevices: ", err); }
             }
         }
 
@@ -570,7 +635,10 @@
         }
 
         function showSection(id, title) {
-            if(id !== 'super-admin' && id !== 'dashboard' && id !== 'pos' && id !== 'opname' && userAktif && userAktif.role === 'Staff' && (id === 'stock' || id === 'sales' || id === 'anggota' || id === 'printer-setup')) { alert("Akses Ditolak."); return; }
+            // FITUR 4: Hak Akses Printer dan Sales dibuka untuk Staff (Hanya Stock & Anggota yg Owner Only)
+            if(id !== 'super-admin' && id !== 'dashboard' && id !== 'pos' && id !== 'opname' && id !== 'sales' && id !== 'printer-setup' && userAktif && userAktif.role === 'Staff' && (id === 'stock' || id === 'anggota')) { 
+                alert("Akses Ditolak. Menu khusus Master/Owner."); return; 
+            }
             
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
@@ -581,6 +649,11 @@
             
             document.getElementById('header-menu-title').innerText = title;
             
+            // Sembunyikan sidebar di layar HP saat menu diklik
+            if (window.innerWidth <= 768) {
+                document.getElementById('main-sidebar').style.transform = 'translateX(-100%)';
+            }
+            
             refreshSemuaData();
             if(id === 'dashboard') updateDashboardStats();
             if(id === 'pos') { setTimeout(() => document.getElementById('input-barcode').focus(), 100); renderFilterKategori(); filterProdukKasir('Semua'); }
@@ -588,7 +661,7 @@
         }
 
         function updateDashboardStats() {
-            let todayPrefix = new Date().toLocaleString('id-ID').split(',')[0]; // Format lokal m/d/yyyy
+            let todayPrefix = new Date().toLocaleString('id-ID').split(',')[0]; 
             let omsetHariIni = 0; let trxHariIni = 0; let diskonHariIni = 0;
             
             riwayatPenjualan.forEach(trx => {
@@ -651,7 +724,13 @@
             document.getElementById('cart-count').innerText = totalItem;
         }
 
+        // --- FITUR 2: SHORTCUT PECAHAN UANG CEPAT ---
         function setBayarPas() { document.getElementById('input-bayar').value = finalTransaksiTotal; }
+        function setBayar(nominal) {
+            let inputBayar = document.getElementById('input-bayar');
+            let currentVal = parseInt(inputBayar.value) || 0;
+            inputBayar.value = currentVal + nominal;
+        }
         
         function renderFilterKategori() {
             let container = document.getElementById('kategori-filter-container'); container.innerHTML = '';
@@ -667,7 +746,6 @@
             let filtered = (kat === 'Semua') ? produkList : produkList.filter(p => p.kategori === kat);
             let htmlTemp = '';
             filtered.forEach(p => {
-                // Meniru gambar desain kartu produk
                 htmlTemp += `<div class="product-card" onclick="tambahKeKeranjang('${p.id}')">
                     <div class="product-img-mock">📦</div>
                     <div class="product-details">
@@ -775,7 +853,6 @@
             }
         }
         
-        // --- FITUR 1: CETAK ULANG TRANSAKSI ---
         async function cetakUlang(idNota) {
             let trx = riwayatPenjualan.find(t => t.idNota === idNota);
             if (!trx) return;
@@ -783,7 +860,7 @@
             await lakukanCetakStruk(trx.idNota, trx.waktu, subtotalAwal, trx.diskon || 0, trx.tunaiBayar, trx.kembalian, true, trx);
         }
 
-        // --- FITUR 2: HAPUS TRANSAKSI (KHUSUS OWNER) ---
+        // --- FITUR 4: HAPUS TRANSAKSI DIKUNCI KHUSUS OWNER ---
         function hapusTransaksiLaporan(idNota) {
             if (userAktif.role !== 'Owner') { alert("Ditolak! Hanya Master/Owner yang berhak menghapus transaksi."); return; }
             if (confirm(`PERINGATAN: Yakin hapus permanen nota ${idNota}?\n(Menghapus riwayat tidak otomatis mengembalikan stok)`)) {
@@ -792,10 +869,9 @@
             }
         }
         
-        function cetakLaporanOmset() { window.print(); } // Disederhanakan untuk contoh print HTML
+        function cetakLaporanOmset() { window.print(); } 
         function ujiCetakPrinter() { document.getElementById('receipt-print-area').innerHTML = `<div class="receipt-header"><div class="receipt-title">TEST KIOSK</div></div><div class="line-dashed"></div><div style="text-align:center;">Sistem terhubung.</div><div class="line-dashed"></div>`; window.print(); }
 
-        // --- FITUR 4: POPUP KONFIRMASI STOK DUPLIKAT ---
         function tambahBarang() { 
             let id = document.getElementById('new-barcode').value.trim(); 
             let nama = document.getElementById('new-name').value.trim(); 
@@ -813,9 +889,7 @@
                             document.getElementById('new-barcode').value=''; document.getElementById('new-name').value=''; document.getElementById('new-price').value=''; document.getElementById('new-stock').value='';
                         }
                         return;
-                    } else {
-                        alert(`Kode Barcode/SKU "${id}" sudah terpakai untuk barang lain ("${produkList[idx].nama}"). Harap gunakan kode unik!`); return; 
-                    }
+                    } else { alert(`Kode Barcode/SKU "${id}" sudah terpakai untuk barang lain ("${produkList[idx].nama}"). Harap gunakan kode unik!`); return; }
                 } 
                 produkList.push({id, nama, kategori: kategori||"Umum", harga, stok}); 
                 localStorage.setItem('produk', JSON.stringify(produkList)); refreshSemuaData(); 
@@ -823,10 +897,25 @@
             } else { alert("Isi semua form wajib (Harga tidak boleh 0)!"); }
         }
         
-        // --- FITUR 4.1: NOTIFIKASI STOK MENIPIS ---
+        // --- FITUR 3: FUNGSI FILTER STOK MENIPIS ---
+        function bukaStokMenipis() {
+            if (userAktif.role === 'Staff') { alert("Ditolak. Menu stok khusus Master/Owner."); return; }
+            isFilterMenipis = true;
+            document.getElementById('filter-stok-banner').style.display = 'flex';
+            showSection('stock', 'Barang Menipis (≤ 5)');
+        }
+        function resetFilterStok() {
+            isFilterMenipis = false;
+            document.getElementById('filter-stok-banner').style.display = 'none';
+            document.getElementById('header-menu-title').innerText = 'Produk & Kelola Stok';
+            renderStok();
+        }
+
         function renderStok() { 
             let tbody = document.querySelector('#stock-table tbody'); let htmlTemp = '';
             produkList.forEach(p => { 
+                if (isFilterMenipis && p.stok > 5) return; // Menyembunyikan stok yang masih aman jika mode filter aktif
+                
                 let warnIcon = p.stok <= 5 ? ' <span class="badge badge-danger">⚠️ Menipis</span>' : '';
                 htmlTemp += `<tr><td><b style="color:var(--primary)">${p.id}</b></td><td>${p.nama}</td><td><span class="badge badge-staff">${p.kategori}</span></td><td>Rp ${p.harga.toLocaleString('id-ID')}</td><td><span style="font-weight:bold; color:${p.stok <= 5 ? 'var(--danger)':'var(--success)'}">${p.stok}</span>${warnIcon}</td><td><button onclick="hapusBarang('${p.id}')" style="background:var(--danger); color:white; padding:4px 10px; border-radius:6px; font-size:12px;">Hapus</button></td></tr>`; 
             }); 
@@ -844,6 +933,8 @@
                     tot += trx.totalBelanja;
                     
                     let aksiBtn = `<button onclick="cetakUlang('${trx.idNota}')" style="background:var(--accent); color:white; padding:4px 8px; font-size:12px; border-radius:4px; margin-right:4px;">🖨️ Cetak</button>`;
+                    
+                    // Fitur 4: Tombol hapus HANYA TAMPIL jika yang login adalah Owner
                     if(userAktif && userAktif.role === 'Owner') aksiBtn += `<button onclick="hapusTransaksiLaporan('${trx.idNota}')" style="background:var(--danger); color:white; padding:4px 8px; font-size:12px; border-radius:4px;">🗑️ Hapus</button>`;
 
                     htmlTemp += `<tr><td><b style="color:var(--primary)">${trx.idNota}</b><br><small style="color:var(--secondary);">${trx.waktu}</small></td><td><span class="badge badge-staff">${trx.kasir}</span></td><td><div style="font-size:12px; color:var(--secondary); max-width:250px;">${trx.itemsTerbeli.join(', ')}</div></td><td><b style="color:var(--success); font-size:14px;">Rp ${trx.totalBelanja.toLocaleString('id-ID')}</b></td><td><small style="color:var(--secondary);">Tunai: ${trx.tunaiBayar}</small><br><small style="color:var(--warning); font-weight:bold;">Kembali: ${trx.kembalian}</small></td><td>${aksiBtn}</td></tr>`; 
