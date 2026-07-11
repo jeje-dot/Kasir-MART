@@ -101,6 +101,9 @@
             <br><br>
             <button onclick="checkLogin()" style="background: var(--success); width: 100%; padding: 14px; font-size: 16px; border-radius: 8px;">MASUK SISTEM</button>
             <p id="lockout-msg" style="color:var(--danger); font-weight:bold; margin-top:15px; display:none;"></p>
+            
+            <!-- TOMBOL RESET MEMORI -->
+            <button onclick="resetSistemTotal()" style="background: transparent; color: #e74c3c; border: 1px solid #e74c3c; width: 100%; padding: 10px; margin-top: 15px; font-size: 14px; border-radius: 8px; cursor: pointer;">⚠️ Reset Memori Aplikasi</button>
         </div>
     </div>
 
@@ -445,6 +448,17 @@
         }
 
         function logout() { location.reload(); }
+
+        // FUNGSI RESET MEMORI APLIKASI
+        function resetSistemTotal() {
+            let konfirmasi = confirm("PERINGATAN!\n\nApakah Anda yakin ingin menghapus SEMUA memori aplikasi di browser ini?\nIni akan mengembalikan PIN ke default (654321) dan mereset semua data toko.");
+            
+            if(konfirmasi) {
+                localStorage.clear();
+                alert("Sistem berhasil direset! Halaman akan dimuat ulang ke pengaturan awal.");
+                location.reload();
+            }
+        }
 
         function triggerSuperAdmin() {
             secretClicks++;
