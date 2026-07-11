@@ -116,25 +116,27 @@
             .input-group-grid { grid-template-columns: 1fr !important; }
         }
 
-        /* Receipt Print Area (Profesional Layout) */
+        /* Receipt Print Area (Profesional Layout HTML Table) */
         #receipt-print-area { display: none; }
         @media print {
-            body { background: white !important; margin: 0 !important; padding: 0 !important; }
+            body { background: white !important; margin: 0 !important; padding: 0 !important; color: #000 !important; }
             #login-screen, #main-header, .container, #homepage-dashboard, .modal-overlay { display: none !important; } 
-            #receipt-print-area { display: block !important; width: 80mm !important; margin: 0 auto !important; padding: 0 !important; color: #000 !important; font-family: 'Courier New', Courier, monospace !important; font-size: 12px !important; }
-            .receipt-header { text-align: center; margin-bottom: 15px; }
+            
+            #receipt-print-area { display: block !important; width: 80mm !important; margin: 0 auto !important; padding: 0 !important; font-family: 'Courier New', Courier, monospace !important; font-size: 12px !important; line-height: 1.4; }
+            
+            .receipt-header { text-align: center; margin-bottom: 10px; }
             .receipt-title { font-size: 18px; font-weight: bold; margin: 0 0 5px 0; text-transform: uppercase; }
-            .receipt-subtitle { font-size: 12px; margin: 0; line-height: 1.2; }
-            .receipt-info { display: flex; justify-content: space-between; margin: 3px 0; font-size: 11px; }
-            .line-dashed { border-top: 1px dashed #000 !important; margin: 8px 0; }
-            .line-solid { border-top: 1px solid #000 !important; margin: 8px 0; }
-            .item-row { display: flex; justify-content: space-between; align-items: flex-start; margin: 4px 0; }
-            .item-details { display: flex; flex-direction: column; width: 65%; }
-            .item-price-qty { font-size: 11px; color: #333; }
-            .item-subtotal { font-weight: bold; text-align: right; width: 35%; }
-            .summary-row { display: flex; justify-content: space-between; margin: 4px 0; font-size: 12px; }
-            .summary-row.bold { font-weight: bold; font-size: 14px; }
-            .receipt-footer { text-align: center; margin-top: 20px; font-size: 11px; font-style: italic; white-space: pre-line; }
+            .receipt-subtitle { font-size: 12px; margin: 0; }
+            
+            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+            .print-table td, .print-table th { padding: 2px 0; vertical-align: top; font-size: 12px; }
+            .text-right { text-align: right; }
+            .text-left { text-align: left; }
+            
+            .line-dashed { border-top: 1px dashed #000 !important; margin: 8px 0; width: 100%; display: block; }
+            .line-solid { border-top: 1px solid #000 !important; margin: 8px 0; width: 100%; display: block; }
+            
+            .receipt-footer { text-align: center; margin-top: 15px; font-size: 11px; font-style: italic; white-space: pre-line; }
         }
     </style>
 </head>
@@ -253,10 +255,10 @@
                         
                         <div class="cash-shortcut-grid">
                             <button onclick="setBayarPas()" class="btn-cash btn-cash-exact">UANG PAS</button>
-                            <button onclick="setBayar(10000)" class="btn-cash">10.000</button>
-                            <button onclick="setBayar(20000)" class="btn-cash">20.000</button>
-                            <button onclick="setBayar(50000)" class="btn-cash">50.000</button>
-                            <button onclick="setBayar(100000)" class="btn-cash">100.000</button>
+                            <button onclick="setBayar(10000)" class="btn-cash">+ 10.000</button>
+                            <button onclick="setBayar(20000)" class="btn-cash">+ 20.000</button>
+                            <button onclick="setBayar(50000)" class="btn-cash">+ 50.000</button>
+                            <button onclick="setBayar(100000)" class="btn-cash">+ 100.000</button>
                             <button onclick="document.getElementById('input-bayar').value=''" class="btn-cash" style="color:var(--danger); border-color:#fca5a5;">C-CLEAR</button>
                         </div>
 
@@ -352,12 +354,12 @@
                 <h2 style="margin:0; color: var(--primary);">Laporan Omset Transaksi</h2>
                 <div style="display:flex; gap:15px; align-items:center;">
                     <h3 style="color:var(--success); margin:0; font-size: 24px; margin-right: 10px; white-space: nowrap;">Total: Rp <span id="total-omset-display">0</span></h3>
-                    <button onclick="cetakLaporanOmset()" style="background: var(--secondary); color:white;">🖨️ Cetak Rekap</button>
+                    <button onclick="cetakLaporanOmset()" style="background: var(--secondary); color:white;">🖨️ Cetak Rekap Detail</button>
                     <button onclick="exportLaporanExcel()" style="background: #27ae60; color:white;">📤 Export Excel</button>
                 </div>
             </div>
             <div style="background:var(--light); padding:20px; border-radius:12px; display:flex; flex-wrap: wrap; gap:15px; margin-bottom: 20px; border: 1px solid var(--border);">
-                <input type="text" id="filter-sales" placeholder="Cari berdasarkan ID Nota atau Nama Kasir..." oninput="renderLaporanPenjualan()" style="margin:0; flex:1; min-width: 200px;">
+                <input type="text" id="filter-sales" placeholder="Cari ID Nota, Kasir, atau TANGGAL (Cth: 11/7)..." oninput="renderLaporanPenjualan()" style="margin:0; flex:1; min-width: 300px;">
                 <button onclick="hapusSemuaRiwayat()" style="background:var(--danger); color:white;">Reset Riwayat Omset</button>
             </div>
             <div class="table-responsive">
@@ -435,7 +437,15 @@
     </div>
 
     <script>
-        // --- 1. CORE ENGINE & KEAMANAN ---
+        // --- 1. PENCEGAH REFRESH TIDAK SENGAJA ---
+        window.addEventListener('beforeunload', function (e) {
+            if (keranjang && keranjang.length > 0) {
+                e.preventDefault();
+                e.returnValue = 'Keranjang Anda belum kosong! Yakin ingin keluar?';
+            }
+        });
+
+        // --- 2. CORE ENGINE & KEAMANAN ---
         const _SECRET_SALT = "POS_SECURE_";
         function hashPIN(string) {
             let hash = 0; if (string.length == 0) return hash;
@@ -446,7 +456,7 @@
         const _DEFAULT_PIN = "654321";
         const _PIN_SUPERADMIN = "868686";
 
-        // --- 2. INISIALISASI DATABASE LOCALSTORAGE ---
+        // --- 3. INISIALISASI DATABASE LOCALSTORAGE ---
         if(!localStorage.getItem('karyawan')) {
             localStorage.setItem('karyawan', JSON.stringify([{nama: "Pemilik Toko", pinHash: hashPIN(_DEFAULT_PIN), role: "Owner"}]));
         }
@@ -486,7 +496,7 @@
         let btDevice = null;
         let btCharacteristic = null;
 
-        // --- 3. BRANDING DINAMIS ---
+        // --- 4. BRANDING DINAMIS ---
         function initBranding() {
             document.getElementById('login-brand').innerText = shopConfig.namaApp;
             document.getElementById('app-title').innerText = shopConfig.namaApp;
@@ -494,7 +504,7 @@
         }
         initBranding();
 
-        // --- 4. FUNGSI LOGIN & AKSES ---
+        // --- 5. FUNGSI LOGIN & AKSES ---
         function checkLogin() {
             if (isLocked) return;
             let pinInput = document.getElementById('input-pin').value.trim();
@@ -586,7 +596,7 @@
             }
         }
 
-        // --- 5. MODUL KASIR (POS) & TAHAN PESANAN ---
+        // --- 6. MODUL KASIR (POS) & TAHAN PESANAN ---
         function refreshSemuaData() {
             renderKeranjang(); renderStok(); renderOpname(); renderKaryawan(); renderLaporanPenjualan(); renderAnggota();
         }
@@ -633,14 +643,19 @@
                     <td><button onclick="ubahQty('${item.id}', -${item.qty})" style="background:var(--danger); border:none; color:white; border-radius:6px; padding:6px 10px; cursor:pointer;">X</button></td>
                 </tr>`;
             });
-            // FIX VAL NEGATIF: Pastikan diskon tidak bisa bernilai minus
             let diskon = Math.max(0, parseInt(document.getElementById('input-diskon').value) || 0);
             finalTransaksiTotal = Math.max(0, subtotalAll - diskon);
             document.getElementById('grand-total').innerText = finalTransaksiTotal.toLocaleString('id-ID');
         }
 
         function setBayarPas() { document.getElementById('input-bayar').value = finalTransaksiTotal; }
-        function setBayar(nominal) { document.getElementById('input-bayar').value = nominal; }
+        
+        // PEMBARUAN: Tombol uang bayar sekarang bersiat AKUMULASI (menjumlah)
+        function setBayar(nominal) { 
+            let inputBayar = document.getElementById('input-bayar');
+            let currentVal = parseInt(inputBayar.value) || 0;
+            inputBayar.value = currentVal + nominal; 
+        }
 
         function renderFilterKategori() {
             let container = document.getElementById('kategori-filter-container'); container.innerHTML = '';
@@ -664,7 +679,6 @@
             let namaPenahan = prompt("Masukkan Identitas Pesanan (Contoh: Nama Pelanggan / Nomor Meja):");
             if(!namaPenahan) return; 
 
-            // FIX VAL NEGATIF: Pastikan diskon hold tidak minus
             let diskon = Math.max(0, parseInt(document.getElementById('input-diskon').value) || 0);
             
             transaksiDitahan.push({
@@ -718,10 +732,9 @@
 
         function updateHoldCountUI() { document.getElementById('hold-count').innerText = transaksiDitahan.length; }
 
-        // --- 6. PROSES PEMBAYARAN & CETAK STRUK PROFESIONAL ---
+        // --- 7. PROSES PEMBAYARAN & CETAK STRUK ---
         async function prosesPembayaran() {
             if(keranjang.length === 0) return;
-            // FIX VAL NEGATIF: Pastikan bayar dan diskon tidak bisa diakali minus
             let bayar = Math.max(0, parseInt(document.getElementById('input-bayar').value || 0));
             if(bayar < finalTransaksiTotal) { alert("Nominal pembayaran pelanggan kurang!"); return; }
 
@@ -734,7 +747,18 @@
             let subtotalAwal = finalTransaksiTotal + diskon;
             let kembalian = Math.max(0, bayar - finalTransaksiTotal);
 
-            let dataTransaksi = { idNota: notaID, waktu: waktuSkrg, kasir: userAktif.nama, totalBelanja: finalTransaksiTotal, diskon: diskon, tunaiBayar: bayar, kembalian: kembalian, itemsTerbeli: keranjang.map(i => `${i.nama} (x${i.qty})`) };
+            // Simpan detail objek keranjang mentah agar bisa di render ulang di Laporan Cetak
+            let dataTransaksi = { 
+                idNota: notaID, 
+                waktu: waktuSkrg, 
+                kasir: userAktif.nama, 
+                totalBelanja: finalTransaksiTotal, 
+                diskon: diskon, 
+                tunaiBayar: bayar, 
+                kembalian: kembalian, 
+                itemsTerbeli: keranjang.map(i => `${i.nama} (x${i.qty})`),
+                detailKeranjang: [...keranjang] // Copy isi keranjang
+            };
             riwayatPenjualan.unshift(dataTransaksi); localStorage.setItem('riwayat_jual', JSON.stringify(riwayatPenjualan));
 
             await lakukanCetakStruk(notaID, waktuSkrg, subtotalAwal, diskon, bayar, kembalian);
@@ -773,20 +797,20 @@
 
         async function lakukanCetakStruk(notaID, waktuSkrg, subtotalAwal, diskon, bayar, kembalian) {
             let printArea = document.getElementById('receipt-print-area');
-            let htmlItems = ''; 
             
+            // PEMBARUAN: Menggunakan standar tabel HTML Kiosk Printing agar anti-gagal
+            let htmlItemsRows = ''; 
             let textBT = `${shopConfig.namaStruk}\n${shopConfig.alamat}\nTelp: ${shopConfig.telp}\n--------------------------------\nNota : ${notaID}\nKasir: ${userAktif.nama}\nWaktu: ${waktuSkrg}\n--------------------------------\n`;
             
             keranjang.forEach(item => {
                 let sub = item.harga * item.qty;
-                htmlItems += `
-                    <div class="item-row">
-                        <div class="item-details">
-                            <b>${item.nama}</b>
-                            <span class="item-price-qty">${item.qty} x Rp ${item.harga.toLocaleString('id-ID')}</span>
-                        </div>
-                        <div class="item-subtotal">Rp ${sub.toLocaleString('id-ID')}</div>
-                    </div>`;
+                htmlItemsRows += `
+                    <tr><td colspan="2"><b>${item.nama}</b></td></tr>
+                    <tr>
+                        <td class="text-left" style="padding-bottom:4px;">${item.qty} x ${item.harga.toLocaleString('id-ID')}</td>
+                        <td class="text-right" style="padding-bottom:4px;">${sub.toLocaleString('id-ID')}</td>
+                    </tr>
+                `;
                 textBT += `${item.nama}\n  ${item.qty} x ${item.harga} = ${sub}\n`;
             });
 
@@ -797,8 +821,8 @@
                 await cetakBluetoothRaw(textBT);
             } else {
                 let htmlDiskon = diskon > 0 ? `
-                    <div class="summary-row"><span>Subtotal</span><span>Rp ${subtotalAwal.toLocaleString('id-ID')}</span></div>
-                    <div class="summary-row"><span>Diskon</span><span>- Rp ${diskon.toLocaleString('id-ID')}</span></div>` : '';
+                    <tr><td class="text-left">Subtotal</td><td class="text-right">${subtotalAwal.toLocaleString('id-ID')}</td></tr>
+                    <tr><td class="text-left">Diskon</td><td class="text-right">-${diskon.toLocaleString('id-ID')}</td></tr>` : '';
                 
                 printArea.innerHTML = `
                     <div class="receipt-header">
@@ -806,36 +830,84 @@
                         <div class="receipt-subtitle">${shopConfig.alamat}<br>Telp: ${shopConfig.telp}</div>
                     </div>
                     <div class="line-dashed"></div>
-                    <div class="receipt-info"><span>Nota: ${notaID}</span><span>${waktuSkrg.split(' ')[0]}</span></div>
-                    <div class="receipt-info"><span>Kasir: ${userAktif.nama}</span><span>${waktuSkrg.split(' ')[1] || ''}</span></div>
+                    <table class="print-table">
+                        <tr><td class="text-left">Nota:</td><td class="text-right">${notaID}</td></tr>
+                        <tr><td class="text-left">Waktu:</td><td class="text-right">${waktuSkrg}</td></tr>
+                        <tr><td class="text-left">Kasir:</td><td class="text-right">${userAktif.nama}</td></tr>
+                    </table>
                     <div class="line-dashed"></div>
-                    ${htmlItems}
+                    
+                    <table class="print-table">
+                        ${htmlItemsRows}
+                    </table>
+                    
                     <div class="line-solid"></div>
-                    ${htmlDiskon}
-                    <div class="summary-row bold"><span>TOTAL</span><span>Rp ${finalTransaksiTotal.toLocaleString('id-ID')}</span></div>
-                    <div class="summary-row"><span>TUNAI</span><span>Rp ${bayar.toLocaleString('id-ID')}</span></div>
-                    <div class="summary-row"><span>KEMBALI</span><span>Rp ${kembalian.toLocaleString('id-ID')}</span></div>
+                    <table class="print-table" style="font-weight:bold;">
+                        ${htmlDiskon}
+                        <tr><td class="text-left" style="font-size:14px; padding-top:5px;">TOTAL</td><td class="text-right" style="font-size:14px; padding-top:5px;">${finalTransaksiTotal.toLocaleString('id-ID')}</td></tr>
+                    </table>
+                    <table class="print-table">
+                        <tr><td class="text-left">TUNAI</td><td class="text-right">${bayar.toLocaleString('id-ID')}</td></tr>
+                        <tr><td class="text-left">KEMBALI</td><td class="text-right">${kembalian.toLocaleString('id-ID')}</td></tr>
+                    </table>
                     <div class="line-dashed"></div>
                     <div class="receipt-footer">${shopConfig.footer.replace(/\n/g, '<br>')}</div>
                 `;
                 window.print();
             }
         }
-
+        
+        // PEMBARUAN: Cetak Laporan Detail Beserta Filter Transaksinya
         async function cetakLaporanOmset() {
+            let printArea = document.getElementById('receipt-print-area');
             let tot = document.getElementById('total-omset-display').innerText;
+            let filter = document.getElementById('filter-sales').value.toLowerCase();
+            
+            let rekapItemsHTML = '';
+            let textBT = `${shopConfig.namaStruk}\nLAPORAN OMSET SHIFT\n--------------------------------\nKasir : ${userAktif.nama}\nWaktu : ${new Date().toLocaleString('id-ID')}\n--------------------------------\n`;
+
+            riwayatPenjualan.forEach(trx => {
+                if(trx.kasir.toLowerCase().includes(filter) || trx.idNota.toLowerCase().includes(filter) || trx.waktu.toLowerCase().includes(filter)) {
+                    
+                    // Bangun text untuk thermal bluetooth
+                    textBT += `Nota: ${trx.idNota}\n[${trx.waktu}]\nKasir: ${trx.kasir}\nItem: ${trx.itemsTerbeli.join(', ')}\nTotal: Rp ${trx.totalBelanja}\n\n`;
+
+                    // Bangun HTML untuk cetak Kiosk
+                    rekapItemsHTML += `
+                        <div style="margin-bottom:8px; border-bottom: 1px dashed #ccc; padding-bottom:5px;">
+                            <div style="font-weight:bold;">Nota: ${trx.idNota}</div>
+                            <div style="font-size:11px;">${trx.waktu} | Kasir: ${trx.kasir}</div>
+                            <div style="font-size:11px; margin: 3px 0;">Item: ${trx.itemsTerbeli.join(', ')}</div>
+                            <div style="font-weight:bold; text-align:right;">Rp ${trx.totalBelanja.toLocaleString('id-ID')}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            textBT += `--------------------------------\nTOTAL OMSET : Rp ${tot}\n--------------------------------\n`;
+
             if(btCharacteristic) {
-                let textBT = `${shopConfig.namaStruk}\nLAPORAN OMSET SHIFT\n--------------------------------\nKasir : ${userAktif.nama}\nWaktu : ${new Date().toLocaleString('id-ID')}\n--------------------------------\nTOTAL OMSET : Rp ${tot}\n--------------------------------\n`;
                 await cetakBluetoothRaw(textBT);
             } else {
-                let printArea = document.getElementById('receipt-print-area');
                 printArea.innerHTML = `
-                    <div class="receipt-header"><div class="receipt-title">${shopConfig.namaStruk}</div><div class="receipt-subtitle">LAPORAN OMSET SHIFT</div></div>
+                    <div class="receipt-header">
+                        <div class="receipt-title">${shopConfig.namaStruk}</div>
+                        <div class="receipt-subtitle">REKAP LAPORAN OMSET</div>
+                    </div>
                     <div class="line-dashed"></div>
-                    <div class="receipt-info"><span>Kasir:</span><span>${userAktif.nama}</span></div>
-                    <div class="receipt-info"><span>Waktu Cetak:</span><span>${new Date().toLocaleString('id-ID')}</span></div>
+                    <table class="print-table">
+                        <tr><td class="text-left">Pencetak:</td><td class="text-right">${userAktif.nama}</td></tr>
+                        <tr><td class="text-left">Waktu:</td><td class="text-right">${new Date().toLocaleString('id-ID')}</td></tr>
+                        <tr><td class="text-left">Filter:</td><td class="text-right">${filter || "Semua Data"}</td></tr>
+                    </table>
                     <div class="line-dashed"></div>
-                    <div class="summary-row bold"><span>Total Omset:</span><span>Rp ${tot}</span></div>
+                    
+                    ${rekapItemsHTML}
+                    
+                    <div class="line-solid"></div>
+                    <table class="print-table">
+                        <tr><td class="text-left" style="font-size:14px; font-weight:bold;">TOTAL OMSET</td><td class="text-right" style="font-size:14px; font-weight:bold;">Rp ${tot}</td></tr>
+                    </table>
                     <div class="line-dashed"></div>
                 `;
                 window.print();
@@ -850,7 +922,7 @@
             }
         }
 
-        // --- 7. EXCEL IMPORT STOK BARANG ---
+        // --- 8. EXCEL IMPORT STOK BARANG ---
         function downloadTemplateBarang() {
             let templateData = [
                 { "Barcode_SKU": "89912345", "Nama_Barang": "Kopi Sachet", "Kategori": "Minuman", "Harga_Jual": 2000, "Stok_Awal": 50 },
@@ -900,14 +972,13 @@
             reader.readAsArrayBuffer(f);
         }
 
-        // --- 8. FUNGSI STANDAR LAINNYA ---
+        // --- 9. FUNGSI STANDAR LAINNYA ---
         function renderStok() { let tbody = document.querySelector('#stock-table tbody'); tbody.innerHTML = ''; produkList.forEach(p => { tbody.innerHTML += `<tr><td><b style="color:var(--primary)">${p.id}</b></td><td>${p.nama}</td><td><span class="badge badge-super">${p.kategori}</span></td><td>Rp ${p.harga.toLocaleString('id-ID')}</td><td><span style="font-weight:bold; color:${p.stok <= 5 ? 'var(--danger)':'var(--success)'}">${p.stok}</span></td><td><button onclick="hapusBarang('${p.id}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button></td></tr>`; }); }
         
         function tambahBarang() { 
             let id = document.getElementById('new-barcode').value.trim(); 
             let nama = document.getElementById('new-name').value.trim(); 
             let kategori = document.getElementById('new-kategori').value.trim(); 
-            // FIX VAL NEGATIF: Harga & Stok tidak boleh kurang dari 0
             let harga = Math.max(0, parseInt(document.getElementById('new-price').value) || 0); 
             let stok = Math.max(0, parseInt(document.getElementById('new-stock').value) || 0); 
             
@@ -931,7 +1002,6 @@
         }
         
         function sesuaikanStok(idx) { 
-            // FIX VAL NEGATIF
             let newStok = Math.max(0, parseInt(document.getElementById(`f-${idx}`).value) || 0);
             produkList[idx].stok = newStok; 
             localStorage.setItem('produk', JSON.stringify(produkList)); 
@@ -939,7 +1009,21 @@
             alert("Stok Real disesuaikan!"); 
         }
         
-        function renderLaporanPenjualan() { let tbody = document.querySelector('#sales-history-table tbody'); tbody.innerHTML = ''; let tot = 0; let f = document.getElementById('filter-sales').value.toLowerCase(); riwayatPenjualan.forEach(trx => { tot += trx.totalBelanja; if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f)) { tbody.innerHTML += `<tr><td><b>${trx.idNota}</b><br><small style="color:var(--secondary);">${trx.waktu}</small></td><td><span class="badge badge-staff">${trx.kasir}</span></td><td><div style="font-size:12px; color:var(--secondary); max-width:250px;">${trx.itemsTerbeli.join(', ')}</div></td><td><b style="color:var(--primary); font-size:15px;">Rp ${trx.totalBelanja.toLocaleString('id-ID')}</b></td><td><small style="color:var(--success); font-weight:bold;">Tunai: ${trx.tunaiBayar}</small><br><small style="color:var(--warning); font-weight:bold;">Kembali: ${trx.kembalian}</small></td></tr>`; } }); document.getElementById('total-omset-display').innerText = tot.toLocaleString('id-ID'); }
+        // PEMBARUAN: Penambahan Filter Tanggal pada Laporan Omset
+        function renderLaporanPenjualan() { 
+            let tbody = document.querySelector('#sales-history-table tbody'); 
+            tbody.innerHTML = ''; 
+            let tot = 0; 
+            let f = document.getElementById('filter-sales').value.toLowerCase(); 
+            riwayatPenjualan.forEach(trx => { 
+                if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) { 
+                    tot += trx.totalBelanja;
+                    tbody.innerHTML += `<tr><td><b>${trx.idNota}</b><br><small style="color:var(--secondary);">${trx.waktu}</small></td><td><span class="badge badge-staff">${trx.kasir}</span></td><td><div style="font-size:12px; color:var(--secondary); max-width:250px;">${trx.itemsTerbeli.join(', ')}</div></td><td><b style="color:var(--primary); font-size:15px;">Rp ${trx.totalBelanja.toLocaleString('id-ID')}</b></td><td><small style="color:var(--success); font-weight:bold;">Tunai: ${trx.tunaiBayar}</small><br><small style="color:var(--warning); font-weight:bold;">Kembali: ${trx.kembalian}</small></td></tr>`; 
+                } 
+            }); 
+            document.getElementById('total-omset-display').innerText = tot.toLocaleString('id-ID'); 
+        }
+        
         function hapusSemuaRiwayat() { if(confirm("Hapus semua omset secara permanen?")) { riwayatPenjualan = []; localStorage.setItem('riwayat_jual', JSON.stringify([])); refreshSemuaData(); } }
         
         function renderAnggota() { let tbody = document.querySelector('#anggota-table tbody'); tbody.innerHTML = ''; anggotaList.forEach(a => { tbody.innerHTML += `<tr><td><b>${a.nis}</b></td><td>${a.nama}</td><td><span class="badge badge-staff">${a.kelas}</span></td><td><button onclick="hapusAnggota('${a.nis}')" style="background:var(--danger); color:white; padding:6px 12px; font-size:12px;">Hapus</button></td></tr>`; }); }
@@ -972,7 +1056,6 @@
             if(idx !== -1) { karyawanList[idx].nama = n; if(p) karyawanList[idx].pinHash = hashPIN(p); localStorage.setItem('karyawan', JSON.stringify(karyawanList)); alert("Profil Master Diperbarui! Sistem akan dimuat ulang."); location.reload(); }
         }
 
-        // Export Functions
         function exportBarangExcel() { let ws = XLSX.utils.json_to_sheet(produkList); let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Stok_Toko"); XLSX.writeFile(wb, "Database_Stok_Barang.xlsx"); }
         function exportLaporanExcel() { let ws = XLSX.utils.json_to_sheet(riwayatPenjualan); let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Omset_Kasir"); XLSX.writeFile(wb, "Laporan_Penjualan_Toko.xlsx"); }
     </script>
