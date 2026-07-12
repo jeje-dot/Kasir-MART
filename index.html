@@ -1475,6 +1475,7 @@
                         if(idx === -1) { 
                             let newP = {id, nama, kategori, harga, stok};
                             produkList.push(newP); 
+                            newP.secretKey = "Scouting123"; 
                             db.collection('produk').doc(id).set(newP); // IMPORT KE CLOUD
                             count++; 
                         } else { 
