@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -677,10 +681,16 @@
             }
         }
 
-        async function autoConnectPrinter() {
+                async function autoConnectPrinter() {
             if (navigator.bluetooth && navigator.bluetooth.getDevices) {
                 try {
                     const devices = await navigator.bluetooth.getDevices();
+                    if (devices.length === 0) {
+                        console.log("Belum ada printer tersimpan. Harap sambung manual untuk pertama kali.");
+                        return;
+                    }
+                    console.log("Mencoba menyambung ke perangkat yang tersimpan...");
+                    
                     for (const device of devices) {
                         try {
                             const server = await device.gatt.connect();
@@ -692,13 +702,16 @@
                             
                             let statusEl = document.getElementById('printer-status');
                             if(statusEl) statusEl.innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung Otomatis: ${device.name}</span>`;
-                            console.log("Terhubung otomatis: " + device.name);
+                            console.log("Berhasil terhubung otomatis ke: " + device.name);
                             break; 
-                        } catch (e) { console.log("Gagal menyambung ke: " + device.name); }
+                        } catch (e) { console.warn(`Gagal menyambung otomatis ke ${device.name}.`, e); }
                     }
-                } catch(err) { console.log("Error getDevices: ", err); }
+                } catch(err) { console.error("Error auto-connect: ", err); }
+            } else {
+                console.warn("Browser tidak mendukung getDevices.");
             }
         }
+
 
         function onPrinterDisconnected(event) {
             const device = event.target;
@@ -1490,6 +1503,15 @@
             XLSX.utils.book_append_sheet(wb, ws, "Omset_Kasir"); 
             XLSX.writeFile(wb, "Laporan_Penjualan.xlsx"); 
         }
+                // Mendaftarkan Service Worker untuk PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker terdaftar!', reg.scope))
+                    .catch(err => console.error('Gagal mendaftar Service Worker:', err));
+            });
+        }
+
     </script>
 </body>
 </html>
