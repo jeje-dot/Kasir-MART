@@ -546,10 +546,11 @@
             if (userAktif) { e.preventDefault(); e.returnValue = 'Data sesi Anda akan hilang jika halaman dimuat ulang. Tetap tinggalkan halaman?'; }
         });
 
+        // --- UPDATE KEAMANAN: HASHING PIN ---
         const _SECRET_SALT = "POS_SECURE_";
         function hashPIN(string) { 
             let hash = 0; 
-            if (string.length == 0) return hash; 
+            if (!string || string.length == 0) return _SECRET_SALT + hash; 
             for (let i = 0; i < string.length; i++) { 
                 hash = ((hash << 5) - hash) + string.charCodeAt(i); 
                 hash = hash & hash; 
@@ -558,9 +559,11 @@
         }
 
         const _DEFAULT_PIN = "654321"; 
-        const _PIN_SUPERADMIN = "868686";
+        
+        // PIN 868686 diubah menjadi hash statis untuk menyembunyikan teks aslinya
+        const _HASH_SUPERADMIN = "POS_SECURE_1654824570";
 
-        // Variabel Data (Tidak lagi bergantung pada localStorage)
+        // Variabel Data
         let shopConfig = { namaApp: "MINIMART", namaStruk: "TOKO KITA", alamat: "Jl. Pendidikan No. 1", telp: "0812-3456-7890", footer: "Terima Kasih\nBarang yang dibeli tidak dapat ditukar" };
         let karyawanList = [];
         let produkList = [];
@@ -681,7 +684,7 @@
             }
         }
 
-                async function autoConnectPrinter() {
+        async function autoConnectPrinter() {
             if (navigator.bluetooth && navigator.bluetooth.getDevices) {
                 try {
                     const devices = await navigator.bluetooth.getDevices();
@@ -711,7 +714,6 @@
                 console.warn("Browser tidak mendukung getDevices.");
             }
         }
-
 
         function onPrinterDisconnected(event) {
             const device = event.target;
@@ -751,7 +753,8 @@
         
         function resetSistemTotal() { 
             let authPin = prompt("OTORISASI KEAMANAN:\nMasukkan PIN SUPER ADMIN untuk mereset seluruh PIN Pengguna:"); 
-            if(authPin === _PIN_SUPERADMIN) { 
+            // PERUBAHAN: Kini mencocokkan input yang sudah di-hash dengan hash tersimpan
+            if(authPin !== null && hashPIN(authPin) === _HASH_SUPERADMIN) { 
                 if(confirm("Apakah Anda Yakin?\nSeluruh PIN Karyawan & Owner akan di-reset ke default (654321).")) { 
                     let ownerDefault = {nama: "Pemilik Toko", pinHash: hashPIN(_DEFAULT_PIN), role: "Owner"};
                     karyawanList = [ownerDefault]; 
@@ -769,7 +772,8 @@
             if(secretClicks >= 3) { 
                 secretClicks = 0; 
                 let masterPinInput = prompt("👑 AKSES SUPER ADMIN:\nMasukkan PIN Master:"); 
-                if(masterPinInput === _PIN_SUPERADMIN) { 
+                // PERUBAHAN: Kini mencocokkan input yang sudah di-hash
+                if(masterPinInput !== null && hashPIN(masterPinInput) === _HASH_SUPERADMIN) { 
                     document.getElementById('menu-super-admin').style.display = 'flex'; 
                     showSection('super-admin', 'Pengaturan Master'); 
                 } else if(masterPinInput !== null) {
@@ -979,7 +983,7 @@
             let tipeDiskonInput = document.getElementById('tipe-diskon').value;
             
             transaksiDitahan.push({ idHold: Date.now(), namaPenahan: namaPenahan, keranjang: keranjang, diskonInput: valDiskonInput, tipeDiskon: tipeDiskonInput });
-            localStorage.setItem('hold_cart', JSON.stringify(transaksiDitahan)); // Hold cart tetap pakai localstorage krn hanya ditahan sementara
+            localStorage.setItem('hold_cart', JSON.stringify(transaksiDitahan));
             kosongkanKeranjang(); 
             updateHoldCountUI();
         }
@@ -1132,7 +1136,7 @@
             if (userAktif.role !== 'Owner') { alert("Ditolak! Hanya Master/Owner yang berhak menghapus transaksi."); return; }
             if (confirm(`PERINGATAN: Yakin hapus permanen nota ${idNota} dari Cloud?\n(Menghapus riwayat tidak otomatis mengembalikan stok)`)) {
                 riwayatPenjualan = riwayatPenjualan.filter(t => t.idNota !== idNota);
-                db.collection('riwayat_jual').doc(idNota).delete(); // HAPUS DARI CLOUD
+                db.collection('riwayat_jual').doc(idNota).delete(); 
                 renderLaporanPenjualan(); 
                 updateDashboardStats();
             }
@@ -1158,8 +1162,6 @@
                     if(produkList[idx].nama.toLowerCase() === nama.toLowerCase()) {
                         if(confirm(`Barang "${nama}" dengan kode "${id}" sudah ada di sistem.\nApakah Anda ingin menambahkan stok sebesar ${stok} buah ke barang ini?`)) {
                             produkList[idx].stok += stok; 
-                            
-                            // UPDATE KE CLOUD
                             db.collection('produk').doc(id).update({stok: produkList[idx].stok});
                             
                             refreshSemuaData(); 
@@ -1177,8 +1179,6 @@
                 
                 let produkBaru = {id, nama, kategori: kategori||"Umum", harga, stok};
                 produkList.push(produkBaru); 
-                
-                // SIMPAN KE CLOUD
                 db.collection('produk').doc(id).set(produkBaru);
                 
                 refreshSemuaData(); 
@@ -1203,11 +1203,7 @@
                 let idsToDelete = Array.from(checkboxes).map(chk => chk.value);
                 
                 produkList = produkList.filter(p => !idsToDelete.includes(p.id));
-                
-                // HAPUS DARI CLOUD SATU PER SATU
-                idsToDelete.forEach(id => {
-                    db.collection('produk').doc(id).delete();
-                });
+                idsToDelete.forEach(id => { db.collection('produk').doc(id).delete(); });
 
                 refreshSemuaData();
                 document.getElementById('chk-all').checked = false; 
@@ -1254,7 +1250,7 @@
         function hapusBarang(id) { 
             if(confirm("Hapus produk permanen dari Cloud?")) { 
                 produkList = produkList.filter(p => p.id !== id); 
-                db.collection('produk').doc(id).delete(); // HAPUS DARI CLOUD
+                db.collection('produk').doc(id).delete(); 
                 refreshSemuaData(); 
             } 
         }
@@ -1277,7 +1273,7 @@
         function sesuaikanStok(id, idx) { 
             let newStok = Math.max(0, parseInt(document.getElementById(`f-${idx}`).value) || 0);
             produkList[idx].stok = newStok; 
-            db.collection('produk').doc(id).update({stok: newStok}); // UPDATE KE CLOUD
+            db.collection('produk').doc(id).update({stok: newStok});
             refreshSemuaData(); 
         }
         
@@ -1346,7 +1342,7 @@
                 
                 let anggotaBaru = {nis, nama, kelas: kelas || "-"};
                 anggotaList.push(anggotaBaru); 
-                db.collection('anggota').doc(nis).set(anggotaBaru); // SIMPAN KE CLOUD
+                db.collection('anggota').doc(nis).set(anggotaBaru); 
 
                 document.getElementById('a-nis').value=''; 
                 document.getElementById('a-nama').value=''; 
@@ -1384,7 +1380,7 @@
             if(n && p){ 
                 let karyawanBaru = {nama:n, pinHash:hashPIN(p), role:"Staff"};
                 karyawanList.push(karyawanBaru); 
-                db.collection('karyawan').doc(karyawanBaru.pinHash.toString()).set(karyawanBaru); // SIMPAN KE CLOUD
+                db.collection('karyawan').doc(karyawanBaru.pinHash.toString()).set(karyawanBaru); 
 
                 document.getElementById('k-nama').value=''; 
                 document.getElementById('k-pin').value=''; 
@@ -1418,7 +1414,7 @@
             shopConfig.telp = document.getElementById('cfg-telp').value.trim(); 
             shopConfig.footer = document.getElementById('cfg-footer').value.trim().replace(/\n/g, '<br>'); 
             
-            db.collection('settings').doc('shop_config').set(shopConfig); // SIMPAN PENGATURAN KE CLOUD
+            db.collection('settings').doc('shop_config').set(shopConfig); 
             initBranding(); 
             alert("Konfigurasi Tersimpan ke Cloud!"); 
         }
@@ -1434,8 +1430,8 @@
                 karyawanList[idx].nama = n; 
                 if(p) karyawanList[idx].pinHash = hashPIN(p); 
                 
-                db.collection('karyawan').doc(oldHash.toString()).delete(); // Hapus akun master lama
-                db.collection('karyawan').doc(karyawanList[idx].pinHash.toString()).set(karyawanList[idx]); // Buat yg baru
+                db.collection('karyawan').doc(oldHash.toString()).delete(); 
+                db.collection('karyawan').doc(karyawanList[idx].pinHash.toString()).set(karyawanList[idx]); 
                 
                 alert("Profil Master Diperbarui! Sistem akan dimuat ulang."); 
                 location.reload(); 
@@ -1475,12 +1471,11 @@
                         if(idx === -1) { 
                             let newP = {id, nama, kategori, harga, stok};
                             produkList.push(newP); 
-                            newP.secretKey = "Scouting123"; 
-                            db.collection('produk').doc(id).set(newP); // IMPORT KE CLOUD
+                            db.collection('produk').doc(id).set(newP); 
                             count++; 
                         } else { 
                             produkList[idx].stok += stok; 
-                            db.collection('produk').doc(id).update({stok: produkList[idx].stok}); // UPDATE STOK CLOUD
+                            db.collection('produk').doc(id).update({stok: produkList[idx].stok}); 
                         } 
                     } 
                 }); 
@@ -1504,7 +1499,8 @@
             XLSX.utils.book_append_sheet(wb, ws, "Omset_Kasir"); 
             XLSX.writeFile(wb, "Laporan_Penjualan.xlsx"); 
         }
-                // Mendaftarkan Service Worker untuk PWA
+        
+        // Mendaftarkan Service Worker untuk PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
