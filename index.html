@@ -17,6 +17,7 @@
             --success: #10b981; 
             --danger: #ef4444; 
             --warning: #f59e0b; 
+            --info: #0ea5e9;
             --light: #f8fafc; 
             --dark: #020617;
             --accent: #2563eb; 
@@ -25,10 +26,8 @@
         }
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin: 0; background-color: #f1f5f9; color: #334155; overflow-x: hidden; }
         
-        /* Layout Struktur Baru */
-        #app-layout { display: flex; min-height: 100vh; overflow: hidden; } /* Cegah scroll body jika tidak perlu */
+        #app-layout { display: flex; min-height: 100vh; overflow: hidden; } 
         
-        /* Sidebar Mirip Gambar */
         .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: transform 0.3s ease; z-index: 100; position: fixed; height: 100vh; transform: translateX(0); }
         .sidebar-brand { padding: 25px 20px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-brand .icon-logo { color: #f59e0b; font-size: 26px; }
@@ -44,7 +43,6 @@
         .logout-btn { background: transparent; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.2); width: 100%; padding: 10px; border-radius: 8px; margin-top: 15px; cursor: pointer; transition: 0.2s; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .logout-btn:hover { background: rgba(239, 68, 68, 0.2); color: var(--danger); border-color: rgba(239, 68, 68, 0.4); }
 
-        /* Area Konten Utama */
         .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; height: 100vh; transition: margin-left 0.3s ease; overflow-y: auto; }
         .topbar { background: white; padding: 18px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 90; }
         .topbar-left { display: flex; align-items: center; gap: 15px; }
@@ -58,7 +56,6 @@
         .content-container { padding: 30px; flex: 1; display: flex; flex-direction: column; }
         .section { display: none; animation: fadeIn 0.3s ease; flex: 1; flex-direction: column; }
         
-        /* Dashboard Cards */
         .dash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px; }
         .dash-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 18px; cursor: pointer; transition: 0.2s; }
         .dash-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
@@ -66,19 +63,17 @@
         .dash-info h4 { margin: 0 0 6px 0; color: var(--secondary); font-size: 14px; font-weight: 600; }
         .dash-info h2 { margin: 0; color: var(--primary); font-size: 24px; }
         
-        /* Form & Atribut Umum */
         label { font-weight: 600; font-size: 13px; color: var(--secondary); display: block; margin-bottom: 8px; margin-top: 15px; }
         input, select, textarea { padding: 12px 16px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #fff; width: 100%; box-sizing: border-box; transition: 0.2s; font-family: inherit; }
         input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
         button { padding: 12px 24px; cursor: pointer; border: none; border-radius: 8px; font-weight: 600; transition: 0.2s; font-size: 14px; font-family: inherit; box-sizing: border-box; }
         button:hover { opacity: 0.9; transform: translateY(-1px); }
         
-        /* POS Layout Optimalisasi Ruang */
-        .pos-layout { display: flex; gap: 24px; align-items: flex-start; height: calc(100vh - 140px); }
-        .pos-products { flex: 1.8; display: flex; flex-direction: column; height: 100%; }
+        /* POS Layout FIX UNTUK TABLET (Keranjang di Kanan) */
+        .pos-layout { display: flex; gap: 20px; align-items: flex-start; height: calc(100vh - 140px); flex-direction: row; }
+        .pos-products { flex: 1; display: flex; flex-direction: column; height: 100%; min-width: 0; }
+        .pos-cart { width: 330px; background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); box-sizing: border-box; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
         
-        /* Keranjang dibikin sticky & menyesuaikan tinggi */
-        .pos-cart { flex: 1; background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); box-sizing: border-box; min-width: 320px; display: flex; flex-direction: column; height: 100%; }
         .cart-wrapper { flex: 1; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: var(--light); margin-bottom: 15px; }
         
         .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
@@ -102,14 +97,14 @@
         .cat-chip:hover { border-color: var(--accent); color: var(--accent); }
         .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
         
-        /* Grid Produk yang Responsif & Mengisi Ruang */
-        .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; flex: 1; overflow-y: auto; align-content: flex-start; padding-bottom: 20px; }
-        .product-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: left; display: flex; flex-direction: column; }
+        /* Grid Produk yang Responsif Anti-Gepeng */
+        .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; flex: 1; overflow-y: auto; align-content: flex-start; padding-bottom: 20px; }
+        .product-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: left; display: flex; flex-direction: column; min-height: 170px; }
         .product-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .product-img-mock { background: var(--light); height: 90px; display: flex; justify-content: center; align-items: center; font-size: 32px; border-bottom: 1px solid var(--border); }
-        .product-details { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-img-mock { background: var(--light); height: 85px; min-height: 85px; display: flex; justify-content: center; align-items: center; font-size: 32px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .product-details { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .btn-pay-method { background: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; flex: 1; font-size: 13px; font-weight: 700; color: var(--secondary); display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-pay-method { background: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; flex: 1; font-size: 12px; font-weight: 700; color: var(--secondary); display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-pay-method.active { background: var(--accent); color: white; border-color: var(--accent); }
         
         .btn-cash { background: white; border: 1px solid var(--border); padding: 8px; border-radius: 6px; font-weight: 700; color: var(--accent); transition: 0.2s; font-size: 13px; }
@@ -121,7 +116,6 @@
         .badge-super { background: #f3e5f5; color: #6a1b9a; }
         .badge-danger { background: #fee2e2; color: #b91c1c; }
 
-        /* Login & Modals */
         #login-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); display: flex; justify-content: center; align-items: center; color: white; z-index: 1000; padding: 20px; }
         .login-box { background: rgba(255,255,255,0.1); padding: 50px; border-radius: 24px; backdrop-filter: blur(20px); text-align: center; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
         
@@ -136,13 +130,14 @@
         .sa-tab-content { display: none; animation: fadeIn 0.3s ease; }
         .sa-tab-content.active { display: block; }
 
-        @media (max-width: 768px) {
+        /* Khusus HP Kecil (Di bawah Tablet) barulah layout jadi bertumpuk */
+        @media (max-width: 600px) {
             .sidebar { transform: translateX(-100%); }
             .main-wrapper { margin-left: 0; }
             .content-container { padding: 15px; }
             .pos-layout { flex-direction: column; height: auto; }
-            .pos-products { height: 60vh; }
-            .pos-cart { width: 100%; min-width: auto; position: static; height: auto; }
+            .pos-products { height: 60vh; width: 100%; }
+            .pos-cart { width: 100%; position: static; height: auto; }
             .cart-wrapper { max-height: 250px; }
         }
 
@@ -292,7 +287,7 @@
                     </div>
                 </div>
 
-                <!-- KASIR / POS VIEW TEROPTIMASI RUANG -->
+                <!-- KASIR / POS VIEW (TAB/TABLET FIX) -->
                 <div id="pos" class="section" style="display: flex;">
                     <div class="pos-layout">
                         <!-- Kiri: Produk (Menggunakan Flexbox untuk mengisi tinggi) -->
@@ -307,11 +302,11 @@
                             
                             <div class="category-container" id="kategori-filter-container"></div>
                             
-                            <!-- Grid ini akan mengisi sisa ruang secara dinamis ke bawah -->
+                            <!-- Grid Dinamis Anti-Gepeng -->
                             <div class="quick-grid" id="quick-product-grid"></div>
                         </div>
                         
-                        <!-- Kanan: Keranjang -->
+                        <!-- Kanan: Keranjang (Lebar Tetap di Tablet) -->
                         <div class="pos-cart">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-shrink: 0;">
                                 <h3 style="margin:0; color:var(--primary);">Keranjang (<span id="cart-count">0</span>)</h3>
@@ -327,25 +322,25 @@
                             <div style="border-top:2px dashed var(--border); padding-top:15px; flex-shrink: 0;">
                                 
                                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap: 10px;">
-                                    <span style="color:var(--secondary); font-weight:600; font-size:14px; white-space:nowrap;">Diskon Tagihan</span>
+                                    <span style="color:var(--secondary); font-weight:600; font-size:13px; white-space:nowrap;">Diskon Tagihan</span>
                                     <div style="display:flex; gap:5px; flex:1; justify-content: flex-end;">
-                                        <select id="tipe-diskon" onchange="renderKeranjang()" style="margin:0; width:70px; padding:8px 5px; font-weight:bold; cursor:pointer;">
+                                        <select id="tipe-diskon" onchange="renderKeranjang()" style="margin:0; width:65px; padding:8px 5px; font-weight:bold; cursor:pointer;">
                                             <option value="rp">Rp</option>
                                             <option value="persen">%</option>
                                         </select>
-                                        <input type="number" id="input-diskon" min="0" placeholder="0" oninput="renderKeranjang()" style="width:120px; text-align:right; margin:0; padding:8px 12px; font-weight:bold;">
+                                        <input type="number" id="input-diskon" min="0" placeholder="0" oninput="renderKeranjang()" style="width:110px; text-align:right; margin:0; padding:8px 12px; font-weight:bold;">
                                     </div>
                                 </div>
                                 
                                 <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom:15px;">
-                                    <span style="font-size:16px; font-weight:700; color:var(--secondary);">Total Bayar</span>
-                                    <span id="grand-total" style="font-size:32px; font-weight:800; color:var(--accent); letter-spacing:-1px;">Rp 0</span>
+                                    <span style="font-size:15px; font-weight:700; color:var(--secondary);">Total Bayar</span>
+                                    <span id="grand-total" style="font-size:28px; font-weight:800; color:var(--accent); letter-spacing:-1px;">Rp 0</span>
                                 </div>
 
                                 <!-- OPSI PEMBAYARAN: TUNAI vs KARTU -->
                                 <div style="display:flex; gap:10px; margin-bottom:15px;">
                                     <button id="btn-metode-tunai" class="btn-pay-method active" onclick="gantiMetodeBayar('Tunai')">💵 Uang Tunai</button>
-                                    <button id="btn-metode-kartu" class="btn-pay-method" onclick="gantiMetodeBayar('Kartu')">💳 Saldo Kartu / EDC</button>
+                                    <button id="btn-metode-kartu" class="btn-pay-method" onclick="gantiMetodeBayar('Kartu')">💳 EDC / E-Money</button>
                                 </div>
 
                                 <div id="area-tunai">
@@ -365,9 +360,19 @@
                                     </div>
                                 </div>
 
+                                <!-- AREA MESIN EDC (SIMULASI/SCAN/NFC) -->
+                                <div id="area-kartu" style="display:none; margin-bottom:15px;">
+                                    <span style="font-size:12px; color:var(--secondary); font-weight:600; display:block; margin-bottom:8px;">Metode EDC (Tempel/Gesek/Insert)</span>
+                                    <div style="display:flex; gap:8px;">
+                                        <input type="text" id="input-bayar-kartu" placeholder="ID Kartu / Scan" style="flex:1; margin:0; font-size:14px; border-color:var(--accent);">
+                                        <button onclick="bacaNFC('input-bayar-kartu', false)" style="background:var(--info); color:white; border:none; padding:0 12px; border-radius:6px; white-space:nowrap; font-size: 13px;">📡 Tap NFC</button>
+                                    </div>
+                                    <small style="color:var(--secondary); font-size:10px; margin-top:5px; display:block;">*Untuk mesin gesek/insert (USB), taruh kursor di atas dan gesek kartu.</small>
+                                </div>
+
                                 <div style="display:flex; gap:10px;">
                                     <button onclick="tahanTransaksi()" style="background:white; color:var(--dark); border:1px solid var(--border); flex:1; display:flex; justify-content:center; align-items:center; gap:8px;"><span style="font-size:16px;">💾</span> Simpan</button>
-                                    <button id="btn-proses-bayar" onclick="prosesPembayaran()" style="background:var(--success); color:white; flex:1.5; font-size:16px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:8px;"><span style="font-size:18px;">💸</span> Bayar</button>
+                                    <button id="btn-proses-bayar" onclick="prosesPembayaran()" style="background:var(--success); color:white; flex:1.5; font-size:15px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:8px;"><span style="font-size:18px;">💸</span> Bayar</button>
                                 </div>
                             </div>
                         </div>
@@ -416,31 +421,57 @@
                     </div>
                 </div>
 
-                <!-- EDC / E-MONEY VIEW BARU -->
+                <!-- EDC / E-MONEY VIEW BARU DENGAN CEK SALDO NFC -->
                 <div id="emoney" class="section">
                     <h3 style="margin:0 0 20px 0; color:var(--primary);">Pusat Pengelolaan Saldo E-Money / EDC Internal</h3>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px; margin-bottom:25px;">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;">
+                        
+                        <!-- Cek Saldo & Info -->
+                        <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
+                            <h4 style="margin:0 0 15px 0; color:var(--info);">🔍 Cek Saldo & Info Kartu</h4>
+                            <label>ID Kartu</label>
+                            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                                <input type="text" id="c-id" placeholder="Scan/Ketik..." style="margin:0; flex:1;">
+                                <button onclick="bacaNFC('c-id', true)" style="background:var(--info); color:white; padding:0 15px; font-size:13px;">📡 Tap NFC</button>
+                            </div>
+                            <button onclick="cekSaldoLayar()" style="background:var(--primary); color:white; width:100%; margin-bottom:15px;">Cek Saldo Sekarang</button>
+                            
+                            <div id="hasil-cek-saldo" style="display:none; background:var(--light); padding:15px; border-radius:8px; border:1px dashed var(--border); text-align:center;">
+                                <div style="font-size:12px; color:var(--secondary);">Pemilik Kartu:</div>
+                                <div id="c-nama" style="font-size:16px; font-weight:bold; color:var(--primary); margin-bottom:5px;">-</div>
+                                <div style="font-size:12px; color:var(--secondary);">Sisa Saldo:</div>
+                                <div id="c-saldo" style="font-size:24px; font-weight:bold; color:var(--success);">Rp 0</div>
+                            </div>
+                        </div>
+
+                        <!-- Topup Saldo -->
+                        <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
+                            <h4 style="margin:0 0 15px 0; color:var(--warning);">💰 Top-Up Saldo Kartu</h4>
+                            <label>ID Kartu</label>
+                            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                                <input type="text" id="t-id" placeholder="Scan/Ketik..." style="margin:0; flex:1;">
+                                <button onclick="bacaNFC('t-id', false)" style="background:var(--info); color:white; padding:0 15px; font-size:13px;">📡 Tap NFC</button>
+                            </div>
+                            <label>Nominal Top-Up (Rp)</label>
+                            <input type="number" id="t-nominal" placeholder="Contoh: 50000" min="1" style="margin-bottom:15px;">
+                            <button onclick="prosesTopup()" style="background:var(--warning); color:white; width:100%;">Isi Saldo Sekarang</button>
+                        </div>
+
                         <!-- Daftar Kartu Baru -->
                         <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
                             <h4 style="margin:0 0 15px 0; color:var(--accent);">➕ Terbitkan Kartu Baru</h4>
                             <label>ID Kartu / No Seri</label>
-                            <input type="text" id="e-id" placeholder="Scan/Ketik Barcode Kartu..." style="margin-bottom:12px;">
+                            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                                <input type="text" id="e-id" placeholder="Scan/Ketik..." style="margin:0; flex:1;">
+                                <button onclick="bacaNFC('e-id', false)" style="background:var(--info); color:white; padding:0 15px; font-size:13px;">📡 Tap NFC</button>
+                            </div>
                             <label>Nama Pemegang Kartu</label>
                             <input type="text" id="e-nama" placeholder="Nama Pelanggan/Karyawan" style="margin-bottom:12px;">
                             <label>Isi Saldo Awal (Opsional)</label>
                             <input type="number" id="e-saldo" placeholder="0" min="0" style="margin-bottom:15px;">
                             <button onclick="daftarKartuBaru()" style="background:var(--success); color:white; width:100%;">Daftarkan Kartu</button>
                         </div>
-                        
-                        <!-- Topup Saldo -->
-                        <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
-                            <h4 style="margin:0 0 15px 0; color:var(--warning);">💰 Top-Up Saldo Kartu</h4>
-                            <label>ID Kartu</label>
-                            <input type="text" id="t-id" placeholder="Scan/Ketik Barcode Kartu..." style="margin-bottom:12px;">
-                            <label>Nominal Top-Up (Rp)</label>
-                            <input type="number" id="t-nominal" placeholder="Contoh: 50000" min="1" style="margin-bottom:15px;">
-                            <button onclick="prosesTopup()" style="background:var(--warning); color:white; width:100%;">Isi Saldo Sekarang</button>
-                        </div>
+
                     </div>
 
                     <!-- Tabel Daftar Kartu -->
@@ -504,11 +535,11 @@
                         <div style="background:white; padding:30px; border-radius:16px; border:1px solid var(--border); text-align:center;">
                             <div style="font-size: 48px; margin-bottom: 15px;">📶</div>
                             <h3 style="margin: 0 0 10px 0;">Bluetooth Kasir (Nirkabel)</h3>
-                            <p style="font-size: 14px; color: var(--secondary);">Sistem kami akan mencoba menyambung otomatis saat Anda Login. Namun jika gagal, silakan sambung manual di bawah karena batasan keamanan Browser.</p>
+                            <p style="font-size: 14px; color: var(--secondary);">Sistem akan otomatis tersambung ke printer yang disimpan di Database saat Anda Login. Jika printer diganti, sambungkan manual di bawah ini.</p>
                             <div style="margin: 20px 0; padding: 15px; background: var(--light); border-radius: 12px; border: 1px dashed var(--border);">
                                 <span id="printer-status" style="font-weight:bold; color:var(--danger); font-size:15px;">❌ Belum Tersambung</span>
                             </div>
-                            <button onclick="hubungkanPrinterBluetooth()" style="background: var(--accent); color: white; width: 100%;">🔍 Cari & Sambung Printer BT</button>
+                            <button onclick="hubungkanPrinterBluetooth()" style="background: var(--accent); color: white; width: 100%;">🔍 Cari & Simpan Printer Baru ke DB</button>
                         </div>
                         <div style="background:white; padding:30px; border-radius:16px; border:1px solid var(--border); text-align:center;">
                             <div style="font-size: 48px; margin-bottom: 15px;">🔌</div>
@@ -617,7 +648,7 @@
         const _DEFAULT_PIN = "654321"; const _PIN_SUPERADMIN = "868686";
 
         // --- DEKLARASI VARIABEL UTAMA ---
-        let shopConfig = { namaApp: "MINIMART", namaStruk: "TOKO KITA", alamat: "Jl. Pendidikan No. 1", telp: "0812-3456-7890", footer: "Terima Kasih\nBarang yang dibeli tidak dapat ditukar" };
+        let shopConfig = { namaApp: "MINIMART", namaStruk: "TOKO KITA", alamat: "Jl. Pendidikan No. 1", telp: "0812-3456-7890", footer: "Terima Kasih\nBarang yang dibeli tidak dapat ditukar", printerName: "" };
         let karyawanList = [];
         let produkList = [];
         let riwayatPenjualan = [];
@@ -678,7 +709,7 @@
 
         function toggleSidebar() {
             const sidebar = document.getElementById('main-sidebar'); const main = document.getElementById('main-content-wrapper');
-            if (window.innerWidth > 768) {
+            if (window.innerWidth > 600) {
                 if (sidebar.style.transform === 'translateX(-100%)') { sidebar.style.transform = 'translateX(0)'; main.style.marginLeft = '260px'; } else { sidebar.style.transform = 'translateX(-100%)'; main.style.marginLeft = '0'; }
             } else {
                 if (sidebar.style.transform === 'translateX(0px)') { sidebar.style.transform = 'translateX(-100%)'; } else { sidebar.style.transform = 'translateX(0px)'; }
@@ -697,25 +728,38 @@
                 salahLogCount = 0; userAktif = user;
                 document.getElementById('login-screen').style.display = 'none'; document.getElementById('app-layout').style.display = 'flex'; document.getElementById('active-user-name').innerText = user.nama;
                 document.querySelectorAll('.id-owner-only').forEach(e => { e.style.display = (user.role === 'Staff') ? 'none' : 'flex'; });
-                showSection('dashboard', 'Dashboard'); updateHoldCountUI(); await autoConnectPrinter();
+                showSection('dashboard', 'Dashboard'); updateHoldCountUI(); 
+                
+                // Memicu sambung otomatis printer saat klik login (menghindari blokir keamanan browser)
+                await autoConnectPrinter();
             } else { 
                 salahLogCount++; document.getElementById('input-pin').value = '';
                 if (salahLogCount >= 3) triggerLockout(); else alert(`PIN Salah!`);
             }
         }
 
+        /* --- FUNGSI AUTO-CONNECT PRINTER DARI DATABASE --- */
         async function autoConnectPrinter() {
             if (navigator.bluetooth && navigator.bluetooth.getDevices) {
                 try {
                     const devices = await navigator.bluetooth.getDevices();
+                    let targetPrinter = shopConfig.printerName;
+                    if(!targetPrinter) return; // Belum ada printer yang tersimpan di DB
+                    
                     for (const device of devices) {
+                        if (device.name !== targetPrinter) continue; // Cari nama printer yang cocok di DB
                         try {
-                            const server = await device.gatt.connect(); const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb'); btCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb'); btDevice = device;
+                            const server = await device.gatt.connect(); 
+                            const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb'); 
+                            btCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb'); 
+                            btDevice = device;
                             device.addEventListener('gattserverdisconnected', onPrinterDisconnected);
-                            let statusEl = document.getElementById('printer-status'); if(statusEl) statusEl.innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung Otomatis: ${device.name}</span>`; break; 
-                        } catch (e) { }
+                            let statusEl = document.getElementById('printer-status'); 
+                            if(statusEl) statusEl.innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung Otomatis ke: ${device.name}</span>`; 
+                            break; 
+                        } catch (e) { console.log(e); }
                     }
-                } catch(err) { }
+                } catch(err) { console.log(err); }
             }
         }
         function onPrinterDisconnected(event) { const device = event.target; let statusEl = document.getElementById('printer-status'); if(statusEl) statusEl.innerHTML = `<span style="color:var(--warning); font-weight:bold;">⚠️ Printer Terputus...</span>`; setTimeout(async () => { try { await device.gatt.connect(); if(statusEl) statusEl.innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung Ulang: ${device.name}</span>`; } catch(e) { if(statusEl) statusEl.innerHTML = `<span style="color:var(--danger); font-weight:bold;">❌ Gagal menyambung ulang.</span>`; } }, 3000); }
@@ -732,7 +776,7 @@
             document.getElementById(id).style.display = (id === 'pos') ? 'flex' : 'block'; 
             let menuEl = document.getElementById('menu-' + id); if(menuEl) menuEl.classList.add('active');
             document.getElementById('header-menu-title').innerText = title;
-            if (window.innerWidth <= 768) { document.getElementById('main-sidebar').style.transform = 'translateX(-100%)'; }
+            if (window.innerWidth <= 600) { document.getElementById('main-sidebar').style.transform = 'translateX(-100%)'; }
             refreshSemuaData();
             if(id === 'dashboard') updateDashboardStats();
             if(id === 'pos') { setTimeout(() => document.getElementById('input-barcode').focus(), 100); renderFilterKategori(); filterProdukKasir('Semua'); }
@@ -751,7 +795,7 @@
         function handleBarcode(event) { if (event.key === 'Enter') { let text = document.getElementById('input-barcode').value.trim().toLowerCase(); if(text) { let produk = produkList.find(p => p.id === text || p.nama.toLowerCase().includes(text)); if(produk) tambahKeKeranjang(produk.id); else alert("Barang tidak ditemukan!"); } document.getElementById('input-barcode').value = ''; } }
         function tambahKeKeranjang(id) { let produk = produkList.find(p => p.id === id); if (!produk) return; if (produk.stok <= 0) { alert("Stok habis!"); return; } let item = keranjang.find(k => k.id === id); if (item) { if (item.qty < produk.stok) item.qty++; else alert("Stok tidak mencukupi!"); } else { keranjang.push({ ...produk, qty: 1 }); } renderKeranjang(); }
         function ubahQty(id, delta) { let item = keranjang.find(k => k.id === id); let produk = produkList.find(p => p.id === id); if (item) { item.qty += delta; if (item.qty > produk.stok) item.qty = produk.stok; if (item.qty <= 0) keranjang = keranjang.filter(k => k.id !== id); } renderKeranjang(); }
-        function kosongkanKeranjang() { keranjang = []; document.getElementById('input-diskon').value=''; document.getElementById('input-bayar').value=''; renderKeranjang(); }
+        function kosongkanKeranjang() { keranjang = []; document.getElementById('input-diskon').value=''; document.getElementById('input-bayar').value=''; document.getElementById('input-bayar-kartu').value=''; renderKeranjang(); }
 
         function renderKeranjang() {
             let tbody = document.getElementById('cart-body'); let htmlTemp = ''; let subtotalAll = 0; let totalItem = 0;
@@ -766,9 +810,9 @@
         function gantiMetodeBayar(metode) {
             metodeBayar = metode;
             if(metode === 'Tunai') {
-                document.getElementById('btn-metode-tunai').classList.add('active'); document.getElementById('btn-metode-kartu').classList.remove('active'); document.getElementById('area-tunai').style.display = 'block'; document.getElementById('btn-proses-bayar').innerHTML = '<span style="font-size:18px;">💸</span> Bayar Tunai';
+                document.getElementById('btn-metode-tunai').classList.add('active'); document.getElementById('btn-metode-kartu').classList.remove('active'); document.getElementById('area-tunai').style.display = 'block'; document.getElementById('area-kartu').style.display = 'none'; document.getElementById('btn-proses-bayar').innerHTML = '<span style="font-size:18px;">💸</span> Bayar Tunai';
             } else {
-                document.getElementById('btn-metode-kartu').classList.add('active'); document.getElementById('btn-metode-tunai').classList.remove('active'); document.getElementById('area-tunai').style.display = 'none'; document.getElementById('btn-proses-bayar').innerHTML = '<span style="font-size:18px;">💳</span> Proses Saldo';
+                document.getElementById('btn-metode-kartu').classList.add('active'); document.getElementById('btn-metode-tunai').classList.remove('active'); document.getElementById('area-tunai').style.display = 'none'; document.getElementById('area-kartu').style.display = 'block'; document.getElementById('btn-proses-bayar').innerHTML = '<span style="font-size:18px;">💳</span> Proses Kartu'; document.getElementById('input-bayar-kartu').focus();
             }
         }
         function setBayarPas() { document.getElementById('input-bayar').value = finalTransaksiTotal; }
@@ -783,6 +827,27 @@
         function pilihHoldTrx(index) { let trx = transaksiDitahan[index]; keranjang = trx.keranjang; document.getElementById('input-diskon').value = trx.diskonInput || ''; document.getElementById('tipe-diskon').value = trx.tipeDiskon || 'rp'; transaksiDitahan.splice(index, 1); localStorage.setItem('hold_cart', JSON.stringify(transaksiDitahan)); tutupModalHold(); renderKeranjang(); updateHoldCountUI(); }
         function updateHoldCountUI() { document.getElementById('hold-count').innerText = transaksiDitahan.length; }
 
+        /* --- FUNGSI HARDWARE NFC --- */
+        async function bacaNFC(targetId, autoCheck = false) {
+            if (!("NDEFReader" in window)) {
+                alert("Fitur Web NFC tidak didukung! Fitur NFC ini hanya bekerja di Google Chrome pada HP/Tablet Android yang memiliki sensor NFC.");
+                return;
+            }
+            try {
+                const ndef = new NDEFReader();
+                await ndef.scan();
+                alert("📡 NFC Siap! Silakan tempelkan Kartu E-Money / Flazz ke punggung HP/Tablet Anda...");
+                ndef.onreading = event => {
+                    const serialNumber = event.serialNumber;
+                    document.getElementById(targetId).value = serialNumber;
+                    alert("✅ Berhasil membaca kartu: " + serialNumber);
+                    if(autoCheck) cekSaldoLayar(); // Auto submit jika sedang di menu cek saldo
+                };
+            } catch (error) {
+                alert("Gagal menyalakan sensor NFC: " + error);
+            }
+        }
+
         async function prosesPembayaran() {
             if(keranjang.length === 0) return;
             let bayar = 0; let kembalian = 0;
@@ -792,11 +857,11 @@
                 if(bayar < finalTransaksiTotal) return alert("Uang tunai bayar kurang!");
                 kembalian = Math.max(0, bayar - finalTransaksiTotal);
             } else {
-                let idK = prompt("Pembayaran EDC Internal\nScan Barcode / Ketik ID Kartu Pelanggan:");
-                if(!idK) return;
+                let idK = document.getElementById('input-bayar-kartu').value.trim();
+                if(!idK) return alert("Silakan Tap NFC, Gesek, atau Ketik ID Kartu pelanggan terlebih dahulu!");
                 let krt = kartuEmoneyList.find(k => k.idKartu === idK);
-                if(!krt) return alert("Kartu tidak terdaftar dalam sistem!");
-                if(krt.saldo < finalTransaksiTotal) return alert(`Saldo tidak cukup! Sisa saldo: Rp ${krt.saldo.toLocaleString('id-ID')}`);
+                if(!krt) return alert("Kartu E-Money ini tidak terdaftar dalam database Anda!");
+                if(krt.saldo < finalTransaksiTotal) return alert(`Saldo tidak cukup! Sisa saldo kartu: Rp ${krt.saldo.toLocaleString('id-ID')}`);
                 
                 // Potong Saldo
                 krt.saldo -= finalTransaksiTotal;
@@ -830,7 +895,21 @@
         /* --- BLUETOOTH & PRINTING --- */
         async function hubungkanPrinterBluetooth() {
             if (!navigator.bluetooth) return alert("Bluetooth tidak didukung browser ini.");
-            try { btDevice = await navigator.bluetooth.requestDevice({ filters: [{services: ['000018f0-0000-1000-8000-00805f9b34fb']}], optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] }); const server = await btDevice.gatt.connect(); const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb'); btCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb'); btDevice.addEventListener('gattserverdisconnected', onPrinterDisconnected); document.getElementById('printer-status').innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung: ${btDevice.name}</span>`; } catch (err) { alert("Batal menyambung."); }
+            try { 
+                btDevice = await navigator.bluetooth.requestDevice({ filters: [{services: ['000018f0-0000-1000-8000-00805f9b34fb']}], optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] }); 
+                const server = await btDevice.gatt.connect(); 
+                const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb'); 
+                btCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb'); 
+                btDevice.addEventListener('gattserverdisconnected', onPrinterDisconnected); 
+                document.getElementById('printer-status').innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung: ${btDevice.name}</span>`; 
+                
+                // SIMPAN NAMA PRINTER KE DATABASE AGAR BISA AUTO-CONNECT BESOK
+                if (shopConfig.printerName !== btDevice.name) {
+                    shopConfig.printerName = btDevice.name;
+                    db.collection('settings').doc('shop_config').set(shopConfig);
+                    alert(`Nama printer "${btDevice.name}" berhasil disimpan ke Database! Saat halaman di-refresh, printer ini akan otomatis dicari saat Anda Login.`);
+                }
+            } catch (err) { alert("Batal menyambung."); }
         }
         async function cetakBluetoothRaw(text) { if(!btCharacteristic) return false; try { let encoder = new TextEncoder(); let printData = encoder.encode('\x1B\x40' + text + '\n\n\n'); for(let i = 0; i < printData.length; i += 100) { await btCharacteristic.writeValue(printData.slice(i, i + 100)); await new Promise(r => setTimeout(r, 50)); } return true; } catch(e) { return false; } }
         async function lakukanCetakStruk(notaID, waktuSkrg, subtotalAwal, diskonNom, diskonLbl, bayar, kembalian, isReprint = false, trxData = null) {
@@ -840,7 +919,7 @@
             sourceKeranjang.forEach(item => { let sub = item.harga * item.qty; htmlItemsRows += `<tr><td colspan="2"><b>${item.nama}</b></td></tr><tr><td class="text-left" style="padding-bottom:4px;">${item.qty} x ${item.harga.toLocaleString('id-ID')}</td><td class="text-right" style="padding-bottom:4px;">${sub.toLocaleString('id-ID')}</td></tr>`; textBT += `${item.nama}\n  ${item.qty} x ${item.harga} = ${sub}\n`; });
             let totalAkhir = trxData ? trxData.totalBelanja : finalTransaksiTotal;
             if(diskonNom > 0) textBT += `\nSubtotal: ${subtotalAwal}\nDiskon (${diskonLbl})  : -${diskonNom}`;
-            let bayarTxt = (metode === 'Kartu') ? 'KARTU' : 'TUNAI';
+            let bayarTxt = (metode === 'Kartu') ? 'KARTU EDC' : 'TUNAI';
             textBT += `\n--------------------------------\nTOTAL   : Rp ${totalAkhir}\n${bayarTxt}   : Rp ${bayar}\nKEMBALI : Rp ${kembalian}\n--------------------------------\n${shopConfig.footer.replace(/<br>/g, '\n')}\n`;
             if (btCharacteristic) { await cetakBluetoothRaw(textBT); } else {
                 let htmlDiskon = diskonNom > 0 ? `<tr><td class="text-left">Subtotal</td><td class="text-right">${subtotalAwal.toLocaleString('id-ID')}</td></tr><tr><td class="text-left">Diskon (${diskonLbl})</td><td class="text-right">-${diskonNom.toLocaleString('id-ID')}</td></tr>` : '';
@@ -879,48 +958,29 @@
         function hapusTransaksiLaporan(idNota) { if (confirm(`Yakin hapus nota ${idNota} dari Cloud?`)) { riwayatPenjualan = riwayatPenjualan.filter(t => t.idNota !== idNota); db.collection('riwayat_jual').doc(idNota).delete(); renderLaporanPenjualan(); updateDashboardStats(); } }
         function hapusSemuaRiwayat() { if(confirm("Hapus semua omset Cloud?")) { riwayatPenjualan.forEach(trx => db.collection('riwayat_jual').doc(trx.idNota).delete()); riwayatPenjualan = []; refreshSemuaData(); } }
         
-        // FUNGSI PERBAIKAN CETAK REKAP
         function cetakLaporanOmset() { 
-            let printArea = document.getElementById('receipt-print-area');
-            let today = new Date().toLocaleString('id-ID');
-            let f = document.getElementById('filter-sales').value.toLowerCase();
-            let totalOmset = 0; let rowHtml = '';
-            
-            riwayatPenjualan.forEach(trx => {
-                if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) {
-                    totalOmset += trx.totalBelanja;
-                    let met = trx.metode === 'Kartu' ? 'EDC' : 'TNI';
-                    rowHtml += `<tr>
-                        <td style="border-bottom:1px solid #ccc; padding:4px 0;">${trx.idNota}<br><small>${trx.waktu}</small></td>
-                        <td style="border-bottom:1px solid #ccc; padding:4px 0;">${trx.kasir}</td>
-                        <td style="border-bottom:1px solid #ccc; padding:4px 0;">${met}</td>
-                        <td style="border-bottom:1px solid #ccc; padding:4px 0; text-align:right;">${trx.totalBelanja.toLocaleString('id-ID')}</td>
-                    </tr>`;
-                }
-            });
-            
-            printArea.innerHTML = `
-                <div class="receipt-header">
-                    <div class="receipt-title">REKAP PENJUALAN</div>
-                    <div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${today}</div>
-                </div>
-                <div class="line-dashed"></div>
-                <table class="print-table" style="width:100%; border-collapse:collapse;">
-                    <thead><tr>
-                        <th style="border-bottom:1px solid #000; text-align:left;">Nota / Waktu</th>
-                        <th style="border-bottom:1px solid #000; text-align:left;">Kasir</th>
-                        <th style="border-bottom:1px solid #000; text-align:left;">Tipe</th>
-                        <th style="border-bottom:1px solid #000; text-align:right;">Omset (Rp)</th>
-                    </tr></thead>
-                    <tbody>${rowHtml}</tbody>
-                </table>
-                <div class="line-dashed"></div>
-                <h3 style="text-align:right; font-size:16px;">TOTAL: Rp ${totalOmset.toLocaleString('id-ID')}</h3>
-            `;
+            let printArea = document.getElementById('receipt-print-area'); let today = new Date().toLocaleString('id-ID'); let f = document.getElementById('filter-sales').value.toLowerCase(); let totalOmset = 0; let rowHtml = '';
+            riwayatPenjualan.forEach(trx => { if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) { totalOmset += trx.totalBelanja; let met = trx.metode === 'Kartu' ? 'EDC' : 'TNI'; rowHtml += `<tr><td style="border-bottom:1px solid #ccc; padding:4px 0;">${trx.idNota}<br><small>${trx.waktu}</small></td><td style="border-bottom:1px solid #ccc; padding:4px 0;">${trx.kasir}</td><td style="border-bottom:1px solid #ccc; padding:4px 0;">${met}</td><td style="border-bottom:1px solid #ccc; padding:4px 0; text-align:right;">${trx.totalBelanja.toLocaleString('id-ID')}</td></tr>`; } });
+            printArea.innerHTML = `<div class="receipt-header"><div class="receipt-title">REKAP PENJUALAN</div><div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${today}</div></div><div class="line-dashed"></div><table class="print-table" style="width:100%; border-collapse:collapse;"><thead><tr><th style="border-bottom:1px solid #000; text-align:left;">Nota / Waktu</th><th style="border-bottom:1px solid #000; text-align:left;">Kasir</th><th style="border-bottom:1px solid #000; text-align:left;">Tipe</th><th style="border-bottom:1px solid #000; text-align:right;">Omset (Rp)</th></tr></thead><tbody>${rowHtml}</tbody></table><div class="line-dashed"></div><h3 style="text-align:right; font-size:16px;">TOTAL: Rp ${totalOmset.toLocaleString('id-ID')}</h3>`;
             window.print();
         } 
 
         /* --- EDC / KARTU E-MONEY INTERNAL --- */
+        function cekSaldoLayar() {
+            let id = document.getElementById('c-id').value.trim();
+            if(!id) return alert("Ketik atau Tap NFC kartu terlebih dahulu!");
+            let krt = kartuEmoneyList.find(k => k.idKartu === id);
+            let boxHasil = document.getElementById('hasil-cek-saldo');
+            if(krt) {
+                document.getElementById('c-nama').innerText = krt.namaPemilik;
+                document.getElementById('c-saldo').innerText = 'Rp ' + krt.saldo.toLocaleString('id-ID');
+                boxHasil.style.display = 'block';
+            } else {
+                boxHasil.style.display = 'none';
+                alert("Kartu tidak ditemukan dalam database E-Money Anda!");
+            }
+        }
+
         function renderKartuEmoney() {
             let tbody = document.querySelector('#emoney-table tbody'); let htmlTemp = '';
             let f = document.getElementById('cari-kartu') ? document.getElementById('cari-kartu').value.toLowerCase() : '';
@@ -956,11 +1016,7 @@
             } else { alert("Isi ID dan Nama Kartu!"); }
         }
 
-        function hapusKartu(id) {
-            if(confirm(`Yakin hapus kartu ${id}? Saldo akan hangus.`)) {
-                kartuEmoneyList = kartuEmoneyList.filter(k => k.idKartu !== id); db.collection('kartu_emoney').doc(id).delete(); renderKartuEmoney();
-            }
-        }
+        function hapusKartu(id) { if(confirm(`Yakin hapus kartu ${id}? Saldo akan hangus.`)) { kartuEmoneyList = kartuEmoneyList.filter(k => k.idKartu !== id); db.collection('kartu_emoney').doc(id).delete(); renderKartuEmoney(); } }
 
         function prosesTopup() {
             let id = document.getElementById('t-id').value.trim(); let nominal = parseInt(document.getElementById('t-nominal').value) || 0;
@@ -986,48 +1042,16 @@
             
             let tbody = document.getElementById('kartu-history-body'); let htmlTemp = '';
             let riwayatFilter = riwayatEmoneyList.filter(r => r.idKartu === id);
-            riwayatFilter.forEach(r => { 
-                let col = r.jenis === 'Top Up' || r.jenis === 'Saldo Awal' ? 'var(--success)' : 'var(--danger)';
-                let tanda = r.jenis === 'Top Up' || r.jenis === 'Saldo Awal' ? '+' : '-';
-                htmlTemp += `<tr><td style="padding:10px; border-bottom:1px solid #e2e8f0;">${r.waktu}</td><td style="padding:10px; border-bottom:1px solid #e2e8f0;">${r.jenis}</td><td style="padding:10px; border-bottom:1px solid #e2e8f0; text-align:right; font-weight:bold; color:${col};">${tanda} ${r.nominal.toLocaleString('id-ID')}</td></tr>`; 
-            });
+            riwayatFilter.forEach(r => { let col = r.jenis === 'Top Up' || r.jenis === 'Saldo Awal' ? 'var(--success)' : 'var(--danger)'; let tanda = r.jenis === 'Top Up' || r.jenis === 'Saldo Awal' ? '+' : '-'; htmlTemp += `<tr><td style="padding:10px; border-bottom:1px solid #e2e8f0;">${r.waktu}</td><td style="padding:10px; border-bottom:1px solid #e2e8f0;">${r.jenis}</td><td style="padding:10px; border-bottom:1px solid #e2e8f0; text-align:right; font-weight:bold; color:${col};">${tanda} ${r.nominal.toLocaleString('id-ID')}</td></tr>`; });
             if(riwayatFilter.length === 0) htmlTemp = `<tr><td colspan="3" style="text-align:center; padding:15px; color:#94a3b8;">Belum ada riwayat transaksi</td></tr>`;
-            tbody.innerHTML = htmlTemp;
-            
-            // Set fungsi cetak ke button
-            document.getElementById('btn-cetak-riwayat-kartu').setAttribute('onclick', `cetakRiwayatKartuBuku('${id}')`);
-            
-            document.getElementById('modal-riwayat-kartu').style.display = 'flex';
+            tbody.innerHTML = htmlTemp; document.getElementById('btn-cetak-riwayat-kartu').setAttribute('onclick', `cetakRiwayatKartuBuku('${id}')`); document.getElementById('modal-riwayat-kartu').style.display = 'flex';
         }
         function tutupModalRiwayatKartu() { document.getElementById('modal-riwayat-kartu').style.display = 'none'; }
         
         function cetakRiwayatKartuBuku(idKartu) {
-            let krt = kartuEmoneyList.find(k => k.idKartu === idKartu); if(!krt) return;
-            let riwayatFilter = riwayatEmoneyList.filter(r => r.idKartu === idKartu);
-            let rowHtml = '';
-            riwayatFilter.forEach(r => { 
-                let tanda = r.jenis === 'Top Up' || r.jenis === 'Saldo Awal' ? '+' : '-';
-                rowHtml += `<tr><td style="border-bottom:1px dashed #ccc; padding:4px 0;">${r.waktu}</td><td style="border-bottom:1px dashed #ccc; padding:4px 0;">${r.jenis}</td><td style="border-bottom:1px dashed #ccc; padding:4px 0; text-align:right;">${tanda} ${r.nominal.toLocaleString('id-ID')}</td></tr>`; 
-            });
-            
-            document.getElementById('receipt-print-area').innerHTML = `
-                <div class="receipt-header">
-                    <div class="receipt-title">BUKU RIWAYAT KARTU</div>
-                    <div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${new Date().toLocaleString('id-ID')}</div>
-                </div>
-                <div class="line-dashed"></div>
-                <div style="font-size:12px; margin-bottom:10px;">
-                    <b>ID Kartu:</b> ${krt.idKartu}<br>
-                    <b>Pemilik:</b> ${krt.namaPemilik}<br>
-                    <b>Sisa Saldo:</b> Rp ${krt.saldo.toLocaleString('id-ID')}
-                </div>
-                <table class="print-table" style="width:100%; border-collapse:collapse;">
-                    <thead><tr><th style="border-bottom:1px solid #000; text-align:left;">Waktu</th><th style="border-bottom:1px solid #000; text-align:left;">Aktivitas</th><th style="border-bottom:1px solid #000; text-align:right;">Nominal (Rp)</th></tr></thead>
-                    <tbody>${rowHtml}</tbody>
-                </table>
-                <div class="line-dashed"></div>
-            `;
-            window.print();
+            let krt = kartuEmoneyList.find(k => k.idKartu === idKartu); if(!krt) return; let riwayatFilter = riwayatEmoneyList.filter(r => r.idKartu === idKartu); let rowHtml = '';
+            riwayatFilter.forEach(r => { let tanda = r.jenis === 'Top Up' || r.jenis === 'Saldo Awal' ? '+' : '-'; rowHtml += `<tr><td style="border-bottom:1px dashed #ccc; padding:4px 0;">${r.waktu}</td><td style="border-bottom:1px dashed #ccc; padding:4px 0;">${r.jenis}</td><td style="border-bottom:1px dashed #ccc; padding:4px 0; text-align:right;">${tanda} ${r.nominal.toLocaleString('id-ID')}</td></tr>`; });
+            document.getElementById('receipt-print-area').innerHTML = `<div class="receipt-header"><div class="receipt-title">BUKU RIWAYAT KARTU</div><div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${new Date().toLocaleString('id-ID')}</div></div><div class="line-dashed"></div><div style="font-size:12px; margin-bottom:10px;"><b>ID Kartu:</b> ${krt.idKartu}<br><b>Pemilik:</b> ${krt.namaPemilik}<br><b>Sisa Saldo:</b> Rp ${krt.saldo.toLocaleString('id-ID')}</div><table class="print-table" style="width:100%; border-collapse:collapse;"><thead><tr><th style="border-bottom:1px solid #000; text-align:left;">Waktu</th><th style="border-bottom:1px solid #000; text-align:left;">Aktivitas</th><th style="border-bottom:1px solid #000; text-align:right;">Nominal (Rp)</th></tr></thead><tbody>${rowHtml}</tbody></table><div class="line-dashed"></div>`; window.print();
         }
 
         /* --- ANGGOTA & SUPER ADMIN STAF --- */
@@ -1043,27 +1067,11 @@
         function saveShopConfiguration() { shopConfig.namaApp = document.getElementById('cfg-nama-app').value.trim() || "Sistem Kasir"; shopConfig.namaStruk = document.getElementById('cfg-nama-struk').value.trim() || "TOKO SAYA"; shopConfig.alamat = document.getElementById('cfg-alamat').value.trim(); shopConfig.telp = document.getElementById('cfg-telp').value.trim(); shopConfig.footer = document.getElementById('cfg-footer').value.trim().replace(/\n/g, '<br>'); db.collection('settings').doc('shop_config').set(shopConfig); initBranding(); alert("Konfigurasi Tersimpan!"); }
         function saveOwnerProfile() { let n = document.getElementById('owner-nama-edit').value.trim(); let p = document.getElementById('owner-pin-edit').value.trim(); if(!n) return; let idx = karyawanList.findIndex(k => k.role === 'Owner'); if(idx !== -1) { let oldHash = karyawanList[idx].pinHash; karyawanList[idx].nama = n; if(p) karyawanList[idx].pinHash = hashPIN(p); db.collection('karyawan').doc(oldHash.toString()).delete(); db.collection('karyawan').doc(karyawanList[idx].pinHash.toString()).set(karyawanList[idx]); alert("Profil Master Diperbarui! Sistem akan dimuat ulang."); location.reload(); } }
 
-        /* --- FITUR EXCEL MANAJEMEN STAF BARU --- */
         function downloadTemplateStaff() { let data = [{"Nama_Staf": "Budi Kasir", "PIN_Rahasia_Angka": "123456", "Role_Akses": "Staff"}]; let ws = XLSX.utils.json_to_sheet(data); let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Template_Staff"); XLSX.writeFile(wb, "Template_Staff_Import.xlsx"); }
         function importStaffExcel() { document.getElementById('file-import-staff').click(); }
-        function handleImportStaff(e) { 
-            let f = e.target.files[0]; if(!f) return; let reader = new FileReader(); 
-            reader.onload = function(e) { 
-                let data = new Uint8Array(e.target.result); let wb = XLSX.read(data, {type: 'array'}); let json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]); let count = 0; 
-                json.forEach(row => { 
-                    let nama = row.Nama_Staf || row.Nama; let pin = row.PIN_Rahasia_Angka || row.PIN || row.Pin; let role = row.Role_Akses || row.Role || "Staff"; 
-                    if(nama && pin) { 
-                        let pinStr = String(pin); let hashed = hashPIN(pinStr); let idx = karyawanList.findIndex(k => k.pinHash === hashed); 
-                        if(idx === -1) { let newK = {nama, pinHash: hashed, role}; karyawanList.push(newK); db.collection('karyawan').doc(hashed.toString()).set(newK); count++; } 
-                    } 
-                }); 
-                refreshSemuaData(); alert(`Berhasil impor ${count} staf ke Cloud!`); document.getElementById('file-import-staff').value = ""; 
-            }; 
-            reader.readAsArrayBuffer(f); 
-        }
+        function handleImportStaff(e) { let f = e.target.files[0]; if(!f) return; let reader = new FileReader(); reader.onload = function(e) { let data = new Uint8Array(e.target.result); let wb = XLSX.read(data, {type: 'array'}); let json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]); let count = 0; json.forEach(row => { let nama = row.Nama_Staf || row.Nama; let pin = row.PIN_Rahasia_Angka || row.PIN || row.Pin; let role = row.Role_Akses || row.Role || "Staff"; if(nama && pin) { let pinStr = String(pin); let hashed = hashPIN(pinStr); let idx = karyawanList.findIndex(k => k.pinHash === hashed); if(idx === -1) { let newK = {nama, pinHash: hashed, role}; karyawanList.push(newK); db.collection('karyawan').doc(hashed.toString()).set(newK); count++; } } }); refreshSemuaData(); alert(`Berhasil impor ${count} staf ke Cloud!`); document.getElementById('file-import-staff').value = ""; }; reader.readAsArrayBuffer(f); }
         function exportStaffExcel() { let data = karyawanList.map(k => ({ Nama: k.nama, Role: k.role, Status: "Aktif" })); let ws = XLSX.utils.json_to_sheet(data); let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data_Staf"); XLSX.writeFile(wb, "Database_Staf.xlsx"); }
 
-        /* --- EXCEL IMPORT/EXPORT STOK BARANG & LAPORAN --- */
         function downloadTemplateBarang() { let templateData = [ { "Barcode_SKU": "89912345", "Nama_Barang": "Kopi Sachet", "Kategori": "Minuman", "Harga_Jual": 2000, "Stok_Awal": 50 } ]; let ws = XLSX.utils.json_to_sheet(templateData); let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Template_Barang"); XLSX.writeFile(wb, "Template_Import.xlsx"); }
         function importBarangExcel() { document.getElementById('file-import-barang').click(); }
         function handleImportBarang(e) { let f = e.target.files[0]; if(!f) return; let reader = new FileReader(); reader.onload = function(e) { let data = new Uint8Array(e.target.result); let wb = XLSX.read(data, {type: 'array'}); let json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]); let count = 0; json.forEach(row => { let id = String(row.Barcode_SKU || row.Barcode || row.ID || row.SKU); let nama = row.Nama_Barang || row.Nama || row.Barang; let kategori = row.Kategori || "Umum"; let harga = Math.max(0, parseInt(row.Harga_Jual || row.Harga || 0)); let stok = Math.max(0, parseInt(row.Stok_Awal || row.Stok || 0)); if(id && id !== "undefined" && nama) { let idx = produkList.findIndex(p => p.id === id); if(idx === -1) { let newP = {id, nama, kategori, harga, stok}; produkList.push(newP); db.collection('produk').doc(id).set(newP); count++; } else { produkList[idx].stok += stok; db.collection('produk').doc(id).update({stok: produkList[idx].stok}); } } }); refreshSemuaData(); alert(`Diimpor: ${count} barang ke Cloud!`); document.getElementById('file-import-barang').value = ""; }; reader.readAsArrayBuffer(f); }
