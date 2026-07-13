@@ -20,7 +20,7 @@
 
     <style>
         :root {
-            --primary: #1e3a8a; /* Biru Profesional */
+            --primary: #1e3a8a; 
             --secondary: #64748b; 
             --success: #10b981; 
             --danger: #ef4444; 
@@ -34,12 +34,10 @@
         }
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin: 0; background-color: #f1f5f9; color: #334155; overflow-x: hidden; }
         
-        /* --- SPLASH SCREEN ANIMATION --- */
         #splash-screen { position: fixed; inset: 0; background: var(--primary); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s ease; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- LOGIN SCREEN REDESIGN (SPLIT SCREEN) --- */
         #login-screen { position: fixed; inset: 0; background: #f1f5f9; display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; display: none; }
         .login-container { display: flex; width: 100%; max-width: 900px; background: white; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); overflow: hidden; min-height: 500px; }
         .login-left { flex: 1.2; background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); padding: 50px; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
@@ -84,7 +82,6 @@
         .content-container { padding: 30px; flex: 1; display: flex; flex-direction: column; }
         .section { display: none; animation: fadeIn 0.3s ease; flex: 1; flex-direction: column; }
         
-        /* --- DASHBOARD REDESIGN --- */
         .dash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
         .dash-card { background: white; padding: 25px 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; transition: 0.2s; }
         .dash-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
@@ -112,27 +109,30 @@
         button { padding: 12px 24px; cursor: pointer; border: none; border-radius: 8px; font-weight: 600; transition: 0.2s; font-size: 14px; font-family: inherit; box-sizing: border-box; }
         button:hover { opacity: 0.9; transform: translateY(-1px); }
         
-        /* POS Layout FIX UNTUK TABLET (Keranjang di Kanan) */
         .pos-layout { display: flex; gap: 20px; align-items: flex-start; height: calc(100vh - 140px); flex-direction: row; }
         .pos-products { flex: 1; display: flex; flex-direction: column; height: 100%; min-width: 0; }
         .pos-cart { width: 330px; background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); box-sizing: border-box; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; }
         
-        .cart-wrapper { flex: 1; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: var(--light); margin-bottom: 15px; }
+        .cart-wrapper { flex: 1; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: var(--light); margin-bottom: 15px; }
         
         .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
+        
+        /* CSS FIX UNTUK TABEL: Memisahkan tabel utama (butuh 500px min) dengan tabel keranjang */
         table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 500px; }
         th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
         th { background-color: var(--light); color: var(--secondary); font-weight: 600; position: sticky; top: 0; z-index: 10;}
         
+        /* FIX KHUSUS KERANJANG AGAR TIDAK TERPOTONG DI TABLET */
+        .cart-table { min-width: 0 !important; width: 100%; border: none; }
+        .cart-table td { padding: 10px 4px; border-bottom: 1px dashed var(--border); vertical-align: middle; }
+        
         .chk-item, #chk-all { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
 
-        .cart-table { min-width: 100%; border: none; }
-        .cart-table td { padding: 10px 0; border-bottom: 1px dashed var(--border); }
-        .cart-item-title { font-weight: 600; color: var(--primary); font-size: 13px; display: block; margin-bottom: 4px; }
+        .cart-item-title { font-weight: 600; color: var(--primary); font-size: 13px; display: block; margin-bottom: 4px; line-height: 1.2; word-wrap: break-word; }
         .cart-item-price { color: var(--secondary); font-size: 12px; }
         
-        .qty-control { display: inline-flex; align-items: center; gap: 8px; background: white; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); }
-        .btn-qty { padding: 2px 8px; font-size: 14px; background: transparent; color: var(--dark); border-radius: 4px; border: none; box-shadow: none; font-weight: bold; }
+        .qty-control { display: inline-flex; align-items: center; gap: 4px; background: white; padding: 2px 4px; border-radius: 8px; border: 1px solid var(--border); }
+        .btn-qty { padding: 2px 6px; font-size: 14px; background: transparent; color: var(--dark); border-radius: 4px; border: none; box-shadow: none; font-weight: bold; }
         .btn-qty:hover { background: var(--light); }
 
         .category-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; flex-shrink: 0; }
@@ -140,7 +140,6 @@
         .cat-chip:hover { border-color: var(--accent); color: var(--accent); }
         .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
         
-        /* Grid Produk yang Responsif Anti-Gepeng */
         .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; flex: 1; overflow-y: auto; align-content: flex-start; padding-bottom: 20px; }
         .product-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: left; display: flex; flex-direction: column; min-height: 170px; }
         .product-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
@@ -170,7 +169,6 @@
         .sa-tab-content { display: none; animation: fadeIn 0.3s ease; }
         .sa-tab-content.active { display: block; }
 
-        /* Khusus HP Kecil (Di bawah Tablet) barulah layout jadi bertumpuk */
         @media (max-width: 600px) {
             .sidebar { transform: translateX(-100%); }
             .main-wrapper { margin-left: 0; }
@@ -202,7 +200,6 @@
 </head>
 <body>
 
-    <!-- Animasi Splash Web -->
     <div id="splash-screen">
         <div class="spinner"></div>
         <h2 style="letter-spacing: 2px;">MEMUAT DATABASE CLOUD</h2>
@@ -260,7 +257,7 @@
         </div>
     </div>
 
-    <!-- Layar Login Redesign Split Screen -->
+    <!-- Layar Login -->
     <div id="login-screen">
         <div class="login-container">
             <div class="login-left">
@@ -337,7 +334,7 @@
             </header>
 
             <div class="content-container">
-                <!-- DASHBOARD VIEW REDESIGN (Dengan Chart.js) -->
+                <!-- DASHBOARD VIEW -->
                 <div id="dashboard" class="section">
                     <div class="dash-cards">
                         <div class="dash-card" onclick="showSection('sales', 'Laporan Omset')">
@@ -400,10 +397,10 @@
                     </div>
                 </div>
 
-                <!-- KASIR / POS VIEW (TAB/TABLET FIX) -->
+                <!-- KASIR / POS VIEW -->
                 <div id="pos" class="section" style="display: flex;">
                     <div class="pos-layout">
-                        <!-- Kiri: Produk (Menggunakan Flexbox untuk mengisi tinggi) -->
+                        <!-- Kiri: Produk -->
                         <div class="pos-products">
                             <div style="display:flex; gap:12px; margin-bottom: 15px; flex-shrink: 0;">
                                 <div style="position:relative; flex:1;">
@@ -415,7 +412,6 @@
                             
                             <div class="category-container" id="kategori-filter-container"></div>
                             
-                            <!-- Grid Dinamis Anti-Gepeng -->
                             <div class="quick-grid" id="quick-product-grid"></div>
                         </div>
                         
@@ -450,7 +446,6 @@
                                     <span id="grand-total" style="font-size:28px; font-weight:800; color:var(--accent); letter-spacing:-1px;">Rp 0</span>
                                 </div>
 
-                                <!-- OPSI PEMBAYARAN: TUNAI vs KARTU -->
                                 <div style="display:flex; gap:10px; margin-bottom:15px;">
                                     <button id="btn-metode-tunai" class="btn-pay-method active" onclick="gantiMetodeBayar('Tunai')">💵 Uang Tunai</button>
                                     <button id="btn-metode-kartu" class="btn-pay-method" onclick="gantiMetodeBayar('Kartu')">💳 EDC / E-Money</button>
@@ -473,7 +468,6 @@
                                     </div>
                                 </div>
 
-                                <!-- AREA MESIN EDC (SIMULASI/SCAN/NFC) -->
                                 <div id="area-kartu" style="display:none; margin-bottom:15px;">
                                     <span style="font-size:12px; color:var(--secondary); font-weight:600; display:block; margin-bottom:8px;">Metode EDC (Tempel/Gesek/Insert)</span>
                                     <div style="display:flex; gap:8px;">
@@ -534,12 +528,11 @@
                     </div>
                 </div>
 
-                <!-- EDC / E-MONEY VIEW BARU DENGAN CEK SALDO NFC -->
+                <!-- EDC / E-MONEY VIEW -->
                 <div id="emoney" class="section">
                     <h3 style="margin:0 0 20px 0; color:var(--primary);">Pusat Pengelolaan Saldo E-Money / EDC Internal</h3>
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;">
                         
-                        <!-- Cek Saldo & Info -->
                         <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
                             <h4 style="margin:0 0 15px 0; color:var(--info);">🔍 Cek Saldo & Info Kartu</h4>
                             <label>ID Kartu</label>
@@ -557,7 +550,6 @@
                             </div>
                         </div>
 
-                        <!-- Topup Saldo -->
                         <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
                             <h4 style="margin:0 0 15px 0; color:var(--warning);">💰 Top-Up Saldo Kartu</h4>
                             <label>ID Kartu</label>
@@ -570,7 +562,6 @@
                             <button onclick="prosesTopup()" style="background:var(--warning); color:white; width:100%;">Isi Saldo Sekarang</button>
                         </div>
 
-                        <!-- Daftar Kartu Baru -->
                         <div style="background: white; padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
                             <h4 style="margin:0 0 15px 0; color:var(--accent);">➕ Terbitkan Kartu Baru</h4>
                             <label>ID Kartu / No Seri</label>
@@ -587,7 +578,6 @@
 
                     </div>
 
-                    <!-- Tabel Daftar Kartu -->
                     <div style="background:white; border-radius:16px; border:1px solid var(--border); padding:20px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                             <h4 style="margin:0; color:var(--primary);">Daftar Kartu Aktif</h4>
@@ -604,13 +594,13 @@
                     </div>
                 </div>
 
-                <!-- SALES REPORT VIEW (Dengan Cetak Rekap) -->
+                <!-- SALES REPORT VIEW (DIPERBAIKI AGAR CETAK LEBIH DETAIL) -->
                 <div id="sales" class="section">
                     <div style="display:flex; justify-content: space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom: 20px; flex-wrap:wrap; gap:15px;">
                         <h3 style="margin:0; color:var(--primary);">Riwayat Transaksi</h3>
                         <div style="display:flex; gap:15px; align-items:center;">
                             <h3 style="color:var(--success); margin:0; font-size: 20px; white-space: nowrap;">Total Omset: Rp <span id="total-omset-display">0</span></h3>
-                            <button onclick="cetakLaporanOmset()" style="background: white; border:1px solid var(--border); color:var(--primary);">🖨️ Cetak Rekap</button>
+                            <button onclick="cetakLaporanOmset()" style="background: white; border:1px solid var(--border); color:var(--primary);">🖨️ Cetak Rekap Detail</button>
                             <button onclick="exportLaporanExcel()" style="background: #27ae60; color:white;">📤 Export Excel</button>
                         </div>
                     </div>
@@ -663,7 +653,7 @@
                     </div>
                 </div>
 
-                <!-- SUPER ADMIN VIEW DENGAN EXCEL STAF -->
+                <!-- SUPER ADMIN VIEW -->
                 <div id="super-admin" class="section">
                     <h3 style="color: var(--primary); margin-top:0; display: flex; align-items: center; gap: 10px;">👑 Pusat Kendali Super Admin</h3>
                     <p style="color:var(--secondary); font-size:14px; margin-top:-5px; margin-bottom: 25px;">Menu ini mengontrol konfigurasi inti sistem dan akses keamanan.</p>
@@ -795,13 +785,11 @@
 
         // --- 2. MUAT DATA DARI CLOUD ---
         window.onload = () => {
-            // Jalankan Splash Screen dulu
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('splash-screen').style.display = 'none';
                     document.getElementById('login-screen').style.display = 'flex';
-                    // Mulai muat data Firebase di balik layar
                     loadDataFromCloud();
                 }, 500);
             }, 1200); 
@@ -828,7 +816,6 @@
                 let riwSnap = await db.collection('riwayat_jual').orderBy('waktu', 'desc').limit(100).get();
                 riwayatPenjualan = riwSnap.docs.map(doc => doc.data());
 
-                // Fetch EDC/Emoney
                 let kartSnap = await db.collection('kartu_emoney').get();
                 kartuEmoneyList = kartSnap.docs.map(doc => doc.data());
                 
@@ -879,7 +866,6 @@
                 document.querySelectorAll('.id-owner-only').forEach(e => { e.style.display = (user.role === 'Staff') ? 'none' : 'flex'; });
                 showSection('dashboard', 'Dashboard'); updateHoldCountUI(); 
                 
-                // Memicu sambung otomatis printer saat klik login (menghindari blokir keamanan browser)
                 await autoConnectPrinter();
             } else { 
                 salahLogCount++; document.getElementById('input-pin').value = '';
@@ -887,7 +873,6 @@
             }
         }
 
-        /* --- FUNGSI AUTO-CONNECT PRINTER DARI DATABASE --- */
         async function autoConnectPrinter() {
             if (navigator.bluetooth && navigator.bluetooth.getDevices) {
                 try {
@@ -932,7 +917,6 @@
             if(id === 'super-admin') loadSuperAdminDataFields();
         }
 
-        /* --- FUNGSI GRAFIK DAN UPDATE DASHBOARD --- */
         function updateDashboardStats() {
             let todayPrefix = new Date().toLocaleString('id-ID').split(',')[0]; let omsetHariIni = 0; let trxHariIni = 0; let diskonHariIni = 0;
             riwayatPenjualan.forEach(trx => { if (trx.waktu.startsWith(todayPrefix)) { omsetHariIni += trx.totalBelanja; trxHariIni++; diskonHariIni += (trx.diskon || 0); } });
@@ -950,36 +934,25 @@
             if(payChartInst) payChartInst.destroy();
             if(topItemChartInst) topItemChartInst.destroy();
 
-            // KALKULASI DATA ASLI DARI TRANSAKSI TOKO
             let countTunai = 0, countKartu = 0;
             let itemCounts = {};
 
             riwayatPenjualan.forEach(trx => {
-                // Hitung Metode Pembayaran
                 if(trx.metode === 'Tunai') countTunai++; 
                 else countKartu++;
-                
-                // Hitung Barang Paling Laris
                 if(trx.detailKeranjang) {
                     trx.detailKeranjang.forEach(item => {
-                        let pureName = item.nama.split(" (x")[0]; // Ambil nama bersih
+                        let pureName = item.nama.split(" (x")[0]; 
                         if(itemCounts[pureName]) itemCounts[pureName] += item.qty;
                         else itemCounts[pureName] = item.qty;
                     });
                 }
             });
 
-            // Urutkan dan Ambil Top 5 Item
-            let sortedItems = Object.keys(itemCounts)
-                                .map(k => ({nama: k, qty: itemCounts[k]}))
-                                .sort((a,b) => b.qty - a.qty)
-                                .slice(0, 5);
-            
-            // Beri data dummy jika toko masih kosong agar grafik tetap tampil cantik
+            let sortedItems = Object.keys(itemCounts).map(k => ({nama: k, qty: itemCounts[k]})).sort((a,b) => b.qty - a.qty).slice(0, 5);
             let topLabels = sortedItems.length > 0 ? sortedItems.map(i => i.nama) : ['Belum ada transaksi'];
             let topData = sortedItems.length > 0 ? sortedItems.map(i => i.qty) : [1];
 
-            // 1. Grafik Penjualan (Data Dummy untuk visual Mingguan, bisa dikembangkan ke data asli nanti)
             const ctxSales = document.getElementById('salesChart').getContext('2d');
             salesChartInst = new Chart(ctxSales, {
                 type: 'line',
@@ -987,20 +960,14 @@
                     labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Hari Ini'],
                     datasets: [{
                         label: 'Transaksi',
-                        data: [12, 19, 15, 22, 30, 25, riwayatPenjualan.length > 0 ? 35 : 10], // Data visual
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#2563eb',
-                        fill: true,
-                        tension: 0.4
+                        data: [12, 19, 15, 22, 30, 25, riwayatPenjualan.length > 0 ? 35 : 10], 
+                        borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', borderWidth: 3, pointBackgroundColor: '#2563eb', fill: true, tension: 0.4
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { borderDash: [5, 5] } }, x: { grid: { display: false } } } }
             });
 
-            // 2. Grafik Lingkaran Metode Pembayaran (Data Asli!)
-            if(countTunai === 0 && countKartu === 0) { countTunai = 1; countKartu = 1; } // Dummy jika kosong
+            if(countTunai === 0 && countKartu === 0) { countTunai = 1; countKartu = 1; }
             const ctxPay = document.getElementById('payChart').getContext('2d');
             payChartInst = new Chart(ctxPay, {
                 type: 'doughnut',
@@ -1011,7 +978,6 @@
                 options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } }
             });
 
-            // 3. Grafik Produk Terlaris (Data Asli!)
             const ctxTop = document.getElementById('topItemChart').getContext('2d');
             topItemChartInst = new Chart(ctxTop, {
                 type: 'pie',
@@ -1020,8 +986,7 @@
                     datasets: [{
                         data: topData,
                         backgroundColor: ['#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#10b981'],
-                        borderWidth: 0,
-                        hoverOffset: 4
+                        borderWidth: 0, hoverOffset: 4
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8, font: {size: 11} } } } }
@@ -1030,7 +995,7 @@
 
         function refreshSemuaData() { renderKeranjang(); renderStok(); renderOpname(); renderKaryawan(); renderLaporanPenjualan(); renderAnggota(); renderKartuEmoney(); updateDashboardStats(); }
 
-        /* --- KASIR / POS --- */
+        /* --- KASIR / POS PERBAIKAN KERANJANG AGAR TIDAK TERPOTONG --- */
         function handleBarcode(event) { if (event.key === 'Enter') { let text = document.getElementById('input-barcode').value.trim().toLowerCase(); if(text) { let produk = produkList.find(p => p.id === text || p.nama.toLowerCase().includes(text)); if(produk) tambahKeKeranjang(produk.id); else alert("Barang tidak ditemukan!"); } document.getElementById('input-barcode').value = ''; } }
         function tambahKeKeranjang(id) { let produk = produkList.find(p => p.id === id); if (!produk) return; if (produk.stok <= 0) { alert("Stok habis!"); return; } let item = keranjang.find(k => k.id === id); if (item) { if (item.qty < produk.stok) item.qty++; else alert("Stok tidak mencukupi!"); } else { keranjang.push({ ...produk, qty: 1 }); } renderKeranjang(); }
         function ubahQty(id, delta) { let item = keranjang.find(k => k.id === id); let produk = produkList.find(p => p.id === id); if (item) { item.qty += delta; if (item.qty > produk.stok) item.qty = produk.stok; if (item.qty <= 0) keranjang = keranjang.filter(k => k.id !== id); } renderKeranjang(); }
@@ -1038,7 +1003,26 @@
 
         function renderKeranjang() {
             let tbody = document.getElementById('cart-body'); let htmlTemp = ''; let subtotalAll = 0; let totalItem = 0;
-            keranjang.forEach(item => { let subtotal = item.harga * item.qty; subtotalAll += subtotal; totalItem += item.qty; htmlTemp += `<tr><td style="width:100%;"><span class="cart-item-title">${item.nama}</span><span class="cart-item-price">Rp ${item.harga.toLocaleString('id-ID')}</span></td><td style="white-space:nowrap;"><div class="qty-control"><button class="btn-qty" onclick="ubahQty('${item.id}', -1)">-</button><span style="width:15px; text-align:center; font-size:13px; font-weight:bold;">${item.qty}</span><button class="btn-qty" onclick="ubahQty('${item.id}', 1)">+</button></div></td><td style="font-weight:bold; color:var(--primary); text-align:right;">Rp ${subtotal.toLocaleString('id-ID')}</td><td style="text-align:right;"><button onclick="ubahQty('${item.id}', -${item.qty})" style="background:transparent; border:none; color:var(--danger); cursor:pointer;">✖</button></td></tr>`; });
+            keranjang.forEach(item => { 
+                let subtotal = item.harga * item.qty; subtotalAll += subtotal; totalItem += item.qty; 
+                htmlTemp += `<tr>
+                    <td>
+                        <span class="cart-item-title">${item.nama}</span>
+                        <span class="cart-item-price">Rp ${item.harga.toLocaleString('id-ID')}</span>
+                    </td>
+                    <td style="white-space:nowrap; text-align:center;">
+                        <div class="qty-control">
+                            <button class="btn-qty" onclick="ubahQty('${item.id}', -1)">-</button>
+                            <span style="width:12px; display:inline-block; text-align:center; font-size:13px; font-weight:bold;">${item.qty}</span>
+                            <button class="btn-qty" onclick="ubahQty('${item.id}', 1)">+</button>
+                        </div>
+                    </td>
+                    <td style="font-weight:bold; color:var(--primary); text-align:right;">
+                        ${subtotal.toLocaleString('id-ID')}
+                        <br><button onclick="ubahQty('${item.id}', -${item.qty})" style="background:transparent; border:none; color:var(--danger); cursor:pointer; font-size: 11px; margin-top:4px; padding:0;">Hapus</button>
+                    </td>
+                </tr>`; 
+            });
             tbody.innerHTML = htmlTemp;
             
             let diskonInput = parseFloat(document.getElementById('input-diskon').value) || 0; let tipeDiskon = document.getElementById('tipe-diskon').value; finalDiskonNominal = 0; finalDiskonLabel = "";
@@ -1066,25 +1050,18 @@
         function pilihHoldTrx(index) { let trx = transaksiDitahan[index]; keranjang = trx.keranjang; document.getElementById('input-diskon').value = trx.diskonInput || ''; document.getElementById('tipe-diskon').value = trx.tipeDiskon || 'rp'; transaksiDitahan.splice(index, 1); localStorage.setItem('hold_cart', JSON.stringify(transaksiDitahan)); tutupModalHold(); renderKeranjang(); updateHoldCountUI(); }
         function updateHoldCountUI() { document.getElementById('hold-count').innerText = transaksiDitahan.length; }
 
-        /* --- FUNGSI HARDWARE NFC --- */
         async function bacaNFC(targetId, autoCheck = false) {
-            if (!("NDEFReader" in window)) {
-                alert("Fitur Web NFC tidak didukung! Fitur NFC ini hanya bekerja di Google Chrome pada HP/Tablet Android yang memiliki sensor NFC.");
-                return;
-            }
+            if (!("NDEFReader" in window)) { alert("Fitur Web NFC tidak didukung! Fitur NFC ini hanya bekerja di Google Chrome pada HP/Tablet Android yang memiliki sensor NFC."); return; }
             try {
-                const ndef = new NDEFReader();
-                await ndef.scan();
+                const ndef = new NDEFReader(); await ndef.scan();
                 alert("📡 NFC Siap! Silakan tempelkan Kartu E-Money / Flazz ke punggung HP/Tablet Anda...");
                 ndef.onreading = event => {
                     const serialNumber = event.serialNumber;
                     document.getElementById(targetId).value = serialNumber;
                     alert("✅ Berhasil membaca kartu: " + serialNumber);
-                    if(autoCheck) cekSaldoLayar(); // Auto submit jika sedang di menu cek saldo
+                    if(autoCheck) cekSaldoLayar(); 
                 };
-            } catch (error) {
-                alert("Gagal menyalakan sensor NFC: " + error);
-            }
+            } catch (error) { alert("Gagal menyalakan sensor NFC: " + error); }
         }
 
         async function prosesPembayaran() {
@@ -1102,20 +1079,15 @@
                 if(!krt) return alert("Kartu E-Money ini tidak terdaftar dalam database Anda!");
                 if(krt.saldo < finalTransaksiTotal) return alert(`Saldo tidak cukup! Sisa saldo kartu: Rp ${krt.saldo.toLocaleString('id-ID')}`);
                 
-                // Potong Saldo
                 krt.saldo -= finalTransaksiTotal;
                 db.collection('kartu_emoney').doc(idK).update({saldo: krt.saldo});
                 
-                // Catat history
                 let idTrxEmoney = "EDC-" + Date.now();
                 let hist = { idTrx: idTrxEmoney, idKartu: idK, jenis: "Pembayaran POS", nominal: finalTransaksiTotal, waktu: new Date().toLocaleString('id-ID'), kasir: userAktif.nama };
                 riwayatEmoneyList.unshift(hist); db.collection('riwayat_emoney').doc(idTrxEmoney).set(hist);
-                
-                bayar = finalTransaksiTotal; // Dianggap pas
-                kembalian = 0;
+                bayar = finalTransaksiTotal; kembalian = 0;
             }
 
-            // Pemotongan Stok
             keranjang.forEach(item => { let idx = produkList.findIndex(p => p.id === item.id); if(idx !== -1) { produkList[idx].stok -= item.qty; db.collection('produk').doc(item.id).update({ stok: produkList[idx].stok }); } });
 
             let notaID = "INV-" + Date.now().toString().slice(-6); let waktuSkrg = new Date().toLocaleString('id-ID'); let subtotalAwal = finalTransaksiTotal + finalDiskonNominal;
@@ -1131,7 +1103,7 @@
         }
         function tutupModalSukses() { document.getElementById('modal-sukses').style.display = 'none'; }
 
-        /* --- BLUETOOTH & PRINTING --- */
+        /* --- BLUETOOTH & PRINTING (DIPERBAIKI AGAR TIDAK DROP BUFFER) --- */
         async function hubungkanPrinterBluetooth() {
             if (!navigator.bluetooth) return alert("Bluetooth tidak didukung browser ini.");
             try { 
@@ -1142,7 +1114,6 @@
                 btDevice.addEventListener('gattserverdisconnected', onPrinterDisconnected); 
                 document.getElementById('printer-status').innerHTML = `<span style="color:var(--success); font-weight:bold; font-size:15px;">✅ Terhubung: ${btDevice.name}</span>`; 
                 
-                // SIMPAN NAMA PRINTER KE DATABASE AGAR BISA AUTO-CONNECT BESOK
                 if (shopConfig.printerName !== btDevice.name) {
                     shopConfig.printerName = btDevice.name;
                     db.collection('settings').doc('shop_config').set(shopConfig);
@@ -1150,16 +1121,65 @@
                 }
             } catch (err) { alert("Batal menyambung."); }
         }
-        async function cetakBluetoothRaw(text) { if(!btCharacteristic) return false; try { let encoder = new TextEncoder(); let printData = encoder.encode('\x1B\x40' + text + '\n\n\n'); for(let i = 0; i < printData.length; i += 100) { await btCharacteristic.writeValue(printData.slice(i, i + 100)); await new Promise(r => setTimeout(r, 50)); } return true; } catch(e) { return false; } }
+
+        // FUNGSI PRINT RAW YANG DIPERBAIKI (Chunk diturunkan jadi 40 byte agar tidak lag)
+        async function cetakBluetoothRaw(text) { 
+            if(!btCharacteristic) return false; 
+            try { 
+                let encoder = new TextEncoder(); 
+                let printData = encoder.encode('\x1B\x40' + text + '\n\n\n'); 
+                for(let i = 0; i < printData.length; i += 40) { 
+                    await btCharacteristic.writeValue(printData.slice(i, i + 40)); 
+                    await new Promise(r => setTimeout(r, 50)); 
+                } 
+                return true; 
+            } catch(e) { return false; } 
+        }
+
+        // STRUKTUR STRUK DIPERBAIKI DENGAN RATA KANAN OTOMATIS
         async function lakukanCetakStruk(notaID, waktuSkrg, subtotalAwal, diskonNom, diskonLbl, bayar, kembalian, isReprint = false, trxData = null) {
             let printArea = document.getElementById('receipt-print-area'); let htmlItemsRows = ''; let headerTambahan = isReprint ? "(CETAK ULANG)\n" : ""; let metode = trxData ? (trxData.metode || 'Tunai') : metodeBayar;
-            let textBT = `${shopConfig.namaStruk}\n${headerTambahan}${shopConfig.alamat}\nTelp: ${shopConfig.telp}\n--------------------------------\nNota : ${notaID}\nKasir: ${trxData ? trxData.kasir : userAktif.nama}\nWaktu: ${waktuSkrg}\n--------------------------------\n`;
+            
+            // Logika Auto-Spasi (32 Karakter untuk printer 58mm)
+            let formatLine = (left, right) => {
+                let l = String(left); let r = String(right);
+                let space = 32 - l.length - r.length;
+                return l + ' '.repeat(space > 0 ? space : 1) + r;
+            };
+
+            // Susun Teks Bluetooth
+            let textBT = '\x1B\x61\x01' + shopConfig.namaStruk + '\n'; // rata tengah
+            textBT += '\x1B\x61\x00'; // rata kiri kembali
+            textBT += headerTambahan + shopConfig.alamat + '\nTelp: ' + shopConfig.telp + '\n';
+            textBT += '--------------------------------\n';
+            textBT += 'Nota : ' + notaID + '\nKasir: ' + (trxData ? trxData.kasir : userAktif.nama) + '\nWaktu: ' + waktuSkrg + '\n';
+            textBT += '--------------------------------\n';
+            
             let sourceKeranjang = trxData ? trxData.detailKeranjang : keranjang;
-            sourceKeranjang.forEach(item => { let sub = item.harga * item.qty; htmlItemsRows += `<tr><td colspan="2"><b>${item.nama}</b></td></tr><tr><td class="text-left" style="padding-bottom:4px;">${item.qty} x ${item.harga.toLocaleString('id-ID')}</td><td class="text-right" style="padding-bottom:4px;">${sub.toLocaleString('id-ID')}</td></tr>`; textBT += `${item.nama}\n  ${item.qty} x ${item.harga} = ${sub}\n`; });
+            sourceKeranjang.forEach(item => { 
+                let sub = item.harga * item.qty; 
+                textBT += item.nama.substring(0, 32) + '\n';
+                let calc = `  ${item.qty} x ${item.harga.toLocaleString('id-ID')}`;
+                textBT += formatLine(calc, sub.toLocaleString('id-ID')) + '\n';
+                
+                // HTML untuk print web biasa
+                htmlItemsRows += `<tr><td colspan="2"><b>${item.nama}</b></td></tr><tr><td class="text-left" style="padding-bottom:4px;">${item.qty} x ${item.harga.toLocaleString('id-ID')}</td><td class="text-right" style="padding-bottom:4px;">${sub.toLocaleString('id-ID')}</td></tr>`; 
+            });
+            
             let totalAkhir = trxData ? trxData.totalBelanja : finalTransaksiTotal;
-            if(diskonNom > 0) textBT += `\nSubtotal: ${subtotalAwal}\nDiskon (${diskonLbl})  : -${diskonNom}`;
+            textBT += '--------------------------------\n';
+            
+            if(diskonNom > 0) {
+                textBT += formatLine('Subtotal', subtotalAwal.toLocaleString('id-ID')) + '\n';
+                textBT += formatLine('Diskon ' + diskonLbl, '-' + diskonNom.toLocaleString('id-ID')) + '\n';
+            }
+            
             let bayarTxt = (metode === 'Kartu') ? 'KARTU EDC' : 'TUNAI';
-            textBT += `\n--------------------------------\nTOTAL   : Rp ${totalAkhir}\n${bayarTxt}   : Rp ${bayar}\nKEMBALI : Rp ${kembalian}\n--------------------------------\n${shopConfig.footer.replace(/<br>/g, '\n')}\n`;
+            textBT += formatLine('TOTAL', 'Rp ' + totalAkhir.toLocaleString('id-ID')) + '\n';
+            textBT += formatLine(bayarTxt, 'Rp ' + bayar.toLocaleString('id-ID')) + '\n';
+            textBT += formatLine('KEMBALI', 'Rp ' + kembalian.toLocaleString('id-ID')) + '\n';
+            textBT += '--------------------------------\n\x1B\x61\x01' + shopConfig.footer.replace(/<br>/g, '\n');
+
             if (btCharacteristic) { await cetakBluetoothRaw(textBT); } else {
                 let htmlDiskon = diskonNom > 0 ? `<tr><td class="text-left">Subtotal</td><td class="text-right">${subtotalAwal.toLocaleString('id-ID')}</td></tr><tr><td class="text-left">Diskon (${diskonLbl})</td><td class="text-right">-${diskonNom.toLocaleString('id-ID')}</td></tr>` : '';
                 printArea.innerHTML = `<div class="receipt-header"><div class="receipt-title">${shopConfig.namaStruk}</div><div class="receipt-subtitle">${shopConfig.alamat}<br>Telp: ${shopConfig.telp}${isReprint ? '<br><br><b>(CETAK ULANG)</b>' : ''}</div></div><div class="line-dashed"></div><table class="print-table"><tr><td class="text-left">Nota:</td><td class="text-right">${notaID}</td></tr><tr><td class="text-left">Waktu:</td><td class="text-right">${waktuSkrg}</td></tr><tr><td class="text-left">Kasir:</td><td class="text-right">${trxData ? trxData.kasir : userAktif.nama}</td></tr></table><div class="line-dashed"></div><table class="print-table">${htmlItemsRows}</table><div class="line-solid"></div><table class="print-table" style="font-weight:bold;">${htmlDiskon}<tr><td class="text-left" style="font-size:14px; padding-top:5px;">TOTAL</td><td class="text-right" style="font-size:14px; padding-top:5px;">${totalAkhir.toLocaleString('id-ID')}</td></tr></table><table class="print-table"><tr><td class="text-left">${bayarTxt}</td><td class="text-right">${bayar.toLocaleString('id-ID')}</td></tr><tr><td class="text-left">KEMBALI</td><td class="text-right">${kembalian.toLocaleString('id-ID')}</td></tr></table><div class="line-dashed"></div><div class="receipt-footer">${shopConfig.footer.replace(/\n/g, '<br>')}</div>`;
@@ -1197,10 +1217,25 @@
         function hapusTransaksiLaporan(idNota) { if (confirm(`Yakin hapus nota ${idNota} dari Cloud?`)) { riwayatPenjualan = riwayatPenjualan.filter(t => t.idNota !== idNota); db.collection('riwayat_jual').doc(idNota).delete(); renderLaporanPenjualan(); updateDashboardStats(); } }
         function hapusSemuaRiwayat() { if(confirm("Hapus semua omset Cloud?")) { riwayatPenjualan.forEach(trx => db.collection('riwayat_jual').doc(trx.idNota).delete()); riwayatPenjualan = []; refreshSemuaData(); } }
         
+        /* FUNGSI CETAK LAPORAN OMSET DIPERBAIKI (Tampil Lebih Detail) */
         function cetakLaporanOmset() { 
             let printArea = document.getElementById('receipt-print-area'); let today = new Date().toLocaleString('id-ID'); let f = document.getElementById('filter-sales').value.toLowerCase(); let totalOmset = 0; let rowHtml = '';
-            riwayatPenjualan.forEach(trx => { if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) { totalOmset += trx.totalBelanja; let met = trx.metode === 'Kartu' ? 'EDC' : 'TNI'; rowHtml += `<tr><td style="border-bottom:1px solid #ccc; padding:4px 0;">${trx.idNota}<br><small>${trx.waktu}</small></td><td style="border-bottom:1px solid #ccc; padding:4px 0;">${trx.kasir}</td><td style="border-bottom:1px solid #ccc; padding:4px 0;">${met}</td><td style="border-bottom:1px solid #ccc; padding:4px 0; text-align:right;">${trx.totalBelanja.toLocaleString('id-ID')}</td></tr>`; } });
-            printArea.innerHTML = `<div class="receipt-header"><div class="receipt-title">REKAP PENJUALAN</div><div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${today}</div></div><div class="line-dashed"></div><table class="print-table" style="width:100%; border-collapse:collapse;"><thead><tr><th style="border-bottom:1px solid #000; text-align:left;">Nota / Waktu</th><th style="border-bottom:1px solid #000; text-align:left;">Kasir</th><th style="border-bottom:1px solid #000; text-align:left;">Tipe</th><th style="border-bottom:1px solid #000; text-align:right;">Omset (Rp)</th></tr></thead><tbody>${rowHtml}</tbody></table><div class="line-dashed"></div><h3 style="text-align:right; font-size:16px;">TOTAL: Rp ${totalOmset.toLocaleString('id-ID')}</h3>`;
+            riwayatPenjualan.forEach(trx => { 
+                if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) { 
+                    totalOmset += trx.totalBelanja; 
+                    let met = trx.metode === 'Kartu' ? 'EDC' : 'TNI'; 
+                    // Tampilkan item lebih rapi
+                    let detailItems = trx.itemsTerbeli ? trx.itemsTerbeli.join('<br>') : '-';
+                    rowHtml += `<tr>
+                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top;"><b>${trx.idNota}</b><br><small>${trx.waktu}</small></td>
+                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top;">${trx.kasir}</td>
+                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top; font-size:11px;">${detailItems}</td>
+                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top;">${met}</td>
+                        <td style="border-bottom:1px solid #ccc; padding:6px 0; text-align:right; vertical-align:top;"><b>${trx.totalBelanja.toLocaleString('id-ID')}</b></td>
+                    </tr>`; 
+                } 
+            });
+            printArea.innerHTML = `<div class="receipt-header"><div class="receipt-title">REKAP DETAIL PENJUALAN</div><div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${today}</div></div><div class="line-dashed"></div><table class="print-table" style="width:100%; border-collapse:collapse;"><thead><tr><th style="border-bottom:1px solid #000; text-align:left;">Nota / Waktu</th><th style="border-bottom:1px solid #000; text-align:left;">Kasir</th><th style="border-bottom:1px solid #000; text-align:left; width: 35%;">Detail Item</th><th style="border-bottom:1px solid #000; text-align:left;">Tipe</th><th style="border-bottom:1px solid #000; text-align:right;">Omset (Rp)</th></tr></thead><tbody>${rowHtml}</tbody></table><div class="line-dashed"></div><h3 style="text-align:right; font-size:16px;">TOTAL: Rp ${totalOmset.toLocaleString('id-ID')}</h3>`;
             window.print();
         } 
 
