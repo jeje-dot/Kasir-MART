@@ -631,6 +631,15 @@
     </div>
 
     <script>
+                // --- REGISTRASI PWA SERVICE WORKER ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('PWA Service Worker Berhasil Didaftarkan!'))
+                .catch(err => console.log('PWA Gagal:', err));
+            });
+        }
+
         // --- 1. INISIALISASI FIREBASE CLOUD ---
         const firebaseConfig = {
             apiKey: "AIzaSyAZFhrhblbfRinSZpJG5f40vDd7PVgl-Co",
