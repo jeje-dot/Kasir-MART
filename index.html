@@ -1213,25 +1213,59 @@
         function renderLaporanPenjualan() { let tbody = document.querySelector('#sales-history-table tbody'); let htmlTemp = ''; let tot = 0; let f = document.getElementById('filter-sales').value.toLowerCase(); riwayatPenjualan.forEach(trx => { if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) { tot += trx.totalBelanja; let aksiBtn = `<button onclick="cetakUlang('${trx.idNota}')" style="background:var(--accent); color:white; padding:4px 8px; font-size:12px; border-radius:4px; margin-right:4px;">🖨️ Cetak</button>`; if(userAktif && userAktif.role === 'Owner') { aksiBtn += `<button onclick="hapusTransaksiLaporan('${trx.idNota}')" style="background:var(--danger); color:white; padding:4px 8px; font-size:12px; border-radius:4px;">🗑️ Hapus</button>`; } let detailDiskon = (trx.diskon > 0) ? `<br><small style="color:var(--danger);">- Diskon ${trx.diskonLabel || 'Rp'} (${trx.diskon})</small>` : ''; let infoMetode = trx.metode === 'Kartu' ? `<br><small style="color:var(--accent); font-weight:bold;">EDC/Kartu</small>` : `<br><small style="color:var(--secondary);">Tunai: ${trx.tunaiBayar}</small><br><small style="color:var(--warning);">Kembali: ${trx.kembalian}</small>`; htmlTemp += `<tr><td><b style="color:var(--primary)">${trx.idNota}</b><br><small style="color:var(--secondary);">${trx.waktu}</small></td><td><span class="badge badge-staff">${trx.kasir}</span></td><td><div style="font-size:12px; color:var(--secondary); max-width:250px;">${trx.itemsTerbeli.join(', ')}${detailDiskon}</div></td><td><b style="color:var(--success); font-size:14px;">Rp ${trx.totalBelanja.toLocaleString('id-ID')}</b></td><td>${infoMetode}</td><td>${aksiBtn}</td></tr>`; } }); tbody.innerHTML = htmlTemp; document.getElementById('total-omset-display').innerText = tot.toLocaleString('id-ID'); }
         function hapusTransaksiLaporan(idNota) { if (confirm(`Yakin hapus nota ${idNota} dari Cloud?`)) { riwayatPenjualan = riwayatPenjualan.filter(t => t.idNota !== idNota); db.collection('riwayat_jual').doc(idNota).delete(); renderLaporanPenjualan(); updateDashboardStats(); } }
         function hapusSemuaRiwayat() { if(confirm("Hapus semua omset Cloud?")) { riwayatPenjualan.forEach(trx => db.collection('riwayat_jual').doc(trx.idNota).delete()); riwayatPenjualan = []; refreshSemuaData(); } }
-        function cetakLaporanOmset() { 
-            let printArea = document.getElementById('receipt-print-area'); let today = new Date().toLocaleString('id-ID'); let f = document.getElementById('filter-sales').value.toLowerCase(); let totalOmset = 0; let rowHtml = '';
+                function cetakLaporanOmset() { 
+            let printArea = document.getElementById('receipt-print-area'); 
+            let today = new Date().toLocaleString('id-ID'); 
+            let f = document.getElementById('filter-sales').value.toLowerCase(); 
+            let totalOmset = 0; 
+            let rowHtml = '';
+            
             riwayatPenjualan.forEach(trx => { 
                 if(trx.kasir.toLowerCase().includes(f) || trx.idNota.toLowerCase().includes(f) || trx.waktu.toLowerCase().includes(f)) { 
                     totalOmset += trx.totalBelanja; 
-                    let met = trx.metode === 'Kartu' ? 'EDC' : 'TNI'; 
+                    let met = trx.metode === 'Kartu' ? 'EDC' : 'TUNAI'; 
                     let detailItems = trx.itemsTerbeli ? trx.itemsTerbeli.join('<br>') : '-';
-                    rowHtml += `<tr>
-                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top;"><b>${trx.idNota}</b><br><small>${trx.waktu}</small></td>
-                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top;">${trx.kasir}</td>
-                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top; font-size:11px;">${detailItems}</td>
-                        <td style="border-bottom:1px solid #ccc; padding:6px 0; vertical-align:top;">${met}</td>
-                        <td style="border-bottom:1px solid #ccc; padding:6px 0; text-align:right; vertical-align:top;"><b>${trx.totalBelanja.toLocaleString('id-ID')}</b></td>
-                    </tr>`; 
+                    
+                    // Desain baru: Menurun seperti struk kasir normal
+                    rowHtml += `
+                    <div style="text-align: left; margin-bottom: 5px;">
+                        <b>Nota: ${trx.idNota}</b><br>
+                        Waktu: ${trx.waktu}<br>
+                        Kasir: ${trx.kasir} | Pembayaran: ${met}
+                    </div>
+                    <div class="line-dashed"></div>
+                    <div style="text-align: left; font-size: 12px; margin-bottom: 5px;">
+                        ${detailItems}
+                    </div>
+                    <table class="print-table" style="font-weight:bold; margin-top: 5px;">
+                        <tr>
+                            <td class="text-left">Total Omset</td>
+                            <td class="text-right">${trx.totalBelanja.toLocaleString('id-ID')}</td>
+                        </tr>
+                    </table>
+                    <div class="line-solid" style="border-top: 2px solid #000 !important; margin-bottom: 15px;"></div>`; 
                 } 
             });
-            printArea.innerHTML = `<div class="receipt-header"><div class="receipt-title">REKAP DETAIL PENJUALAN</div><div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${today}</div></div><div class="line-dashed"></div><table class="print-table" style="width:100%; border-collapse:collapse;"><thead><tr><th style="border-bottom:1px solid #000; text-align:left;">Nota / Waktu</th><th style="border-bottom:1px solid #000; text-align:left;">Kasir</th><th style="border-bottom:1px solid #000; text-align:left; width: 35%;">Detail Item</th><th style="border-bottom:1px solid #000; text-align:left;">Tipe</th><th style="border-bottom:1px solid #000; text-align:right;">Omset (Rp)</th></tr></thead><tbody>${rowHtml}</tbody></table><div class="line-dashed"></div><h3 style="text-align:right; font-size:16px;">TOTAL: Rp ${totalOmset.toLocaleString('id-ID')}</h3>`;
+
+            printArea.innerHTML = `
+                <div class="receipt-header">
+                    <div class="receipt-title">REKAP PENJUALAN</div>
+                    <div class="receipt-subtitle">${shopConfig.namaApp}<br>Dicetak: ${today}</div>
+                </div>
+                <div class="line-dashed"></div>
+                ${rowHtml}
+                <table class="print-table" style="font-weight:bold; font-size: 14px; margin-top: 10px;">
+                    <tr>
+                        <td class="text-left" style="font-size: 14px; padding-top: 5px;">TOTAL AKHIR</td>
+                        <td class="text-right" style="font-size: 14px; padding-top: 5px;">Rp ${totalOmset.toLocaleString('id-ID')}</td>
+                    </tr>
+                </table>
+                <div class="line-dashed"></div>
+                <div class="receipt-footer">Akhir Laporan Rekapitulasi</div>`;
+                
             window.print();
         } 
+
 
         /* --- EDC / KARTU E-MONEY INTERNAL --- */
         function cekSaldoLayar() {
