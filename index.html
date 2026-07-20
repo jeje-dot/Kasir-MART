@@ -890,9 +890,6 @@
                             <label>Client Key API:</label>
                             <input type="text" id="cfg-qris-client" placeholder="Contoh: SB-Mid-client-xxxxxxxx...">
                             
-                            <label>Server Key API (Rahasia):</label>
-                            <input type="password" id="cfg-qris-server" placeholder="Contoh: SB-Mid-server-xxxxxxxx...">
-                            
                             <button onclick="simpanPengaturanAPI()" style="background:var(--success); color:white; width:100%; margin-top:10px;">💾 Simpan Kredensial API</button>
                         </div>
                     </div>
@@ -931,10 +928,12 @@
 
         const _SECRET_SALT = "POS_SECURE_";
         function hashPIN(string) { let hash = 0; if (string.length == 0) return hash; for (let i = 0; i < string.length; i++) { hash = ((hash << 5) - hash) + string.charCodeAt(i); hash = hash & hash; } return _SECRET_SALT + hash; }
-        const _DEFAULT_PIN = "654321"; const _PIN_SUPERADMIN = "868686";
+        
+        const _DEFAULT_PIN = "654321"; 
+        const _HASH_SUPERADMIN_DEFAULT = hashPIN("868686");
 
         // --- DEKLARASI VARIABEL UTAMA ---
-        let shopConfig = { namaApp: "MINIMART", namaStruk: "TOKO KITA", alamat: "Jl. Pendidikan No. 1", telp: "0812-3456-7890", footer: "Terima Kasih\nBarang yang dibeli tidak dapat ditukar", printerName: "", pajak: 0, sc: 0, qrisProvider: "Midtrans", qrisClientKey: "", qrisServerKey: "" };
+        let shopConfig = { namaApp: "MINIMART", namaStruk: "TOKO KITA", alamat: "Jl. Pendidikan No. 1", telp: "0812-3456-7890", footer: "Terima Kasih\nBarang yang dibeli tidak dapat ditukar", printerName: "", pajak: 0, sc: 0, qrisProvider: "Midtrans", qrisClientKey: "" };
         let promoConfig = { minTrx: 0, pct: 0, status: "NONAKTIF" };
         let karyawanList = [];
         let produkList = [];
@@ -1112,8 +1111,34 @@
 
         function triggerLockout() { isLocked = true; let cooldown = 30; document.getElementById('input-pin').disabled = true; document.getElementById('lockout-msg').style.display = 'block'; let timer = setInterval(() => { cooldown--; document.getElementById('lockout-msg').innerText = `TERKUNCI! Tunggu ${cooldown} detik.`; if (cooldown <= 0) { clearInterval(timer); isLocked = false; salahLogCount = 0; document.getElementById('input-pin').disabled = false; document.getElementById('lockout-msg').style.display = 'none'; document.getElementById('input-pin').focus(); } }, 1000); }
         function logout() { userAktif = null; location.reload(); }
-        function resetSistemTotal() { let authPin = prompt("OTORISASI KEAMANAN:\nMasukkan PIN SUPER ADMIN:"); if(authPin === _PIN_SUPERADMIN) { if(confirm("Yakin mereset seluruh PIN ke default (654321)?")) { let ownerDefault = {nama: "Pemilik Toko", pinHash: hashPIN(_DEFAULT_PIN), role: "Owner"}; karyawanList = [ownerDefault]; db.collection('karyawan').doc('owner').set(ownerDefault); alert("Sukses direset."); location.reload(); } } }
-        function triggerSuperAdmin() { secretClicks++; if(secretClicks >= 3) { secretClicks = 0; let masterPinInput = prompt("👑 AKSES SUPER ADMIN:\nMasukkan PIN Master:"); if(masterPinInput === _PIN_SUPERADMIN) { showSection('super-admin', 'Pengaturan Master'); } } setTimeout(() => { secretClicks = 0; }, 1500); }
+        function resetSistemTotal() { 
+            let authPin = prompt("OTORISASI KEAMANAN:\nMasukkan PIN SUPER ADMIN:"); 
+            let targetHash = shopConfig.superAdminHash || _HASH_SUPERADMIN_DEFAULT; 
+            if(hashPIN(authPin) === targetHash) { 
+                if(confirm("Yakin mereset seluruh PIN ke default (654321)?")) { 
+                    let ownerDefault = {nama: "Pemilik Toko", pinHash: hashPIN(_DEFAULT_PIN), role: "Owner"}; 
+                    karyawanList = [ownerDefault]; 
+                    db.collection('karyawan').doc('owner').set(ownerDefault); 
+                    alert("Sukses direset."); location.reload(); 
+                } 
+            } else { 
+                alert("Otorisasi Gagal!"); 
+            } 
+        }
+        function triggerSuperAdmin() { 
+            secretClicks++; 
+            if(secretClicks >= 3) { 
+                secretClicks = 0; 
+                let masterPinInput = prompt("👑 AKSES SUPER ADMIN:\nMasukkan PIN Master:"); 
+                let targetHash = shopConfig.superAdminHash || _HASH_SUPERADMIN_DEFAULT; 
+                if(hashPIN(masterPinInput) === targetHash) { 
+                    showSection('super-admin', 'Pengaturan Master Sistem'); 
+                } else { 
+                    alert("Akses Ditolak! PIN Salah."); 
+                } 
+            } 
+            setTimeout(() => { secretClicks = 0; }, 1500); 
+        }
         function switchSaTab(tabId, btnElement) { document.querySelectorAll('.sa-tab-btn').forEach(btn => btn.classList.remove('active')); document.querySelectorAll('.sa-tab-content').forEach(content => content.classList.remove('active')); btnElement.classList.add('active'); document.getElementById(tabId).classList.add('active'); }
         function switchTabInv(tabId, btnElement) { document.querySelectorAll('#stock .sa-tab-btn').forEach(btn => btn.classList.remove('active')); document.querySelectorAll('#stock .sa-tab-content').forEach(content => content.classList.remove('active')); btnElement.classList.add('active'); document.getElementById(tabId).classList.add('active'); }
 
@@ -1826,7 +1851,7 @@
             
             document.getElementById('cfg-qris-provider').value = shopConfig.qrisProvider || 'Midtrans';
             document.getElementById('cfg-qris-client').value = shopConfig.qrisClientKey || '';
-            document.getElementById('cfg-qris-server').value = shopConfig.qrisServerKey || '';
+            // Server Key API tidak lagi dirender untuk mencegah kebocoran
 
             let owner = karyawanList.find(k => k.role === 'Owner'); 
             if(owner) document.getElementById('owner-nama-edit').value = owner.nama; 
@@ -1837,9 +1862,8 @@
         function simpanPengaturanAPI() {
             shopConfig.qrisProvider = document.getElementById('cfg-qris-provider').value;
             shopConfig.qrisClientKey = document.getElementById('cfg-qris-client').value.trim();
-            shopConfig.qrisServerKey = document.getElementById('cfg-qris-server').value.trim();
             db.collection('settings').doc('shop_config').set(shopConfig);
-            alert("✅ Konfigurasi API Gateway Berhasil Disimpan ke Cloud!");
+            alert("✅ Konfigurasi API Client Berhasil Disimpan! (Server Key harus disetel di backend)");
         }
 
         function saveOwnerProfile() { let n = document.getElementById('owner-nama-edit').value.trim(); let p = document.getElementById('owner-pin-edit').value.trim(); if(!n) return; let idx = karyawanList.findIndex(k => k.role === 'Owner'); if(idx !== -1) { let oldHash = karyawanList[idx].pinHash; karyawanList[idx].nama = n; if(p) karyawanList[idx].pinHash = hashPIN(p); db.collection('karyawan').doc(oldHash.toString()).delete(); db.collection('karyawan').doc(karyawanList[idx].pinHash.toString()).set(karyawanList[idx]); alert("Profil Master Diperbarui! Sistem akan dimuat ulang."); location.reload(); } }
